@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>SVG'den JS Kütüphanesi Üretici</title>
+    <style>
+        body { font-family: sans-serif; background: #2c3e50; color: white; display: flex; flex-direction: column; align-items: center; padding: 50px; }
+        #drop-zone { width: 600px; height: 150px; border: 3px dashed #3498db; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #3498db; background: #34495e; transition: 0.3s; margin-bottom: 20px; }
+        #drop-zone.dragover { background: #2980b9; color: white; border-color: white; }
+        textarea { width: 800px; height: 300px; padding: 15px; border-radius: 8px; border: none; font-family: monospace; background: #ecf0f1; color: #2c3e50; }
+    </style>
+</head>
+<body>
+
+    <h2>⚡ SVG Klasörünü JS'ye Çevirici</h2>
+    <p style="font-size: 14px; margin-bottom: 30px;">İndirdiğin tüm SVG dosyalarını seç ve aşağıdaki kutuya sürükle bırak.</p>
+
+    <div id="drop-zone">📂 SVG Dosyalarını Buraya Sürükle Bırak</div>
+    
+    <textarea id="sonuc-kutusu" placeholder="gorsel-kutuphane.js kodları burada belirecek... Kopyalayıp projene yapıştır!"></textarea>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const sonucKutusu = document.getElementById('sonuc-kutusu');
+
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            
+            const dosyalar = Array.from(e.dataTransfer.files).filter(file => file.type === "image/svg+xml");
+            if (dosyalar.length === 0) return alert("Lütfen sadece SVG dosyaları sürükleyin!");
+
+            let jsKodu = "const svgKutuphanesi = {\n";
+            let islenen = 0;
+
+            dosyalar.forEach(dosya => {
+                const okuyucu = new FileReader();
+                okuyucu.onload = function(event) {
+                    const parser = new DOMParser();
+                    const svgDoc = parser.parseFromString(event.target.result, "image/svg+xml");
+                    const svgElement = svgDoc.querySelector('svg');
+                    
+                    if (svgElement) {
+                        // Dosya adını Türkçe kelimeye çevir (Örn: elma.svg -> elma)
+                        let kelime = dosya.name.replace('.svg', '').toLowerCase().trim();
+                        // İçindeki asıl çizim kodlarını al
+                        let icerik = svgElement.innerHTML.replace(/\s+/g, ' ').trim();
+                        
+                        // YENİ VE GÜVENLİ KISIM: JSON.stringify tüm tehlikeli tırnakları/karakterleri ehlileştirir!
+                        jsKodu += `    "${kelime}": ${JSON.stringify(icerik)},\n`;
+                    }
+
+                    islenen++;
+                    if (islenen === dosyalar.length) {
+                        jsKodu += "};\n";
+                        sonucKutusu.value = jsKodu;
+                        dropZone.innerText = `✅ ${dosyalar.length} Adet İkon Başarıyla Çevrildi!`;
+                        dropZone.style.background = "#27ae60";
+                        dropZone.style.borderColor = "#2ecc71";
+                        dropZone.style.color = "white";
+                    }
+                };
+                okuyucu.readAsText(dosya);
+            });
+        });
+    </script>
+</body>
+</html>

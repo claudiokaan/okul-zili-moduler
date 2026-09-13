@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Okul Zili - Harf Çapa (Anchor) Editörü (Canlı Önizlemeli)</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; background: #2c3e50; color: #fff; margin: 0; height: 100vh; overflow: hidden; }
+        #sidebar { width: 380px; background: #34495e; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
+        #workspace { flex-grow: 1; display: flex; justify-content: center; align-items: center; background: #ecf0f1; position: relative; }
+        
+        @font-face {
+            font-family: 'TemelYazi';
+            src: url('Fontlar/TemelYazi.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        svg { background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-radius: 8px; cursor: crosshair; }
+        .nokta { fill: #e74c3c; stroke: #fff; stroke-width: 2; cursor: grab; }
+        .nokta:active { cursor: grabbing; }
+        .nokta-yazi { font-size: 14px; font-weight: bold; fill: #2c3e50; pointer-events: none; user-select: none; }
+        
+        /* Canlı Önizleme Çizgisi */
+        .onizleme-cizgi { fill: none; stroke: #e67e22; stroke-width: 3; stroke-dasharray: 6,6; opacity: 0.8; pointer-events: none; }
+
+        input[type="text"], input[type="number"] { padding: 8px; border-radius: 4px; border: none; font-size: 14px; font-weight: bold; text-align: center; }
+        button { padding: 10px; background: #e67e22; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #d35400; }
+        .btn-danger { background: #c0392b; }
+        .btn-danger:hover { background: #e74c3c; }
+        textarea { height: 200px; border-radius: 4px; padding: 10px; font-family: monospace; font-size: 12px; resize: none; }
+        
+        .cizgi-girdi { display: flex; gap: 8px; align-items: center; background: #2c3e50; padding: 5px; border-radius: 4px; }
+        .cizgi-girdi span { font-size: 12px; min-width: 50px; }
+        .cizgi-baglanti { width: 60px; }
+        .cizgi-bend { width: 65px; }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <h2>🛠️ Harf Laboratuvarı v3</h2>
+        
+        <label>1. Çalışılacak Harf:</label>
+        <input type="text" id="harfInput" value="A" maxlength="1" oninput="harfiGuncelle()">
+        
+        <div style="background: #2c3e50; padding: 10px; border-radius: 4px; font-size: 12px; line-height: 1.4;">
+            <b>Canlı Önizleme Aktif!</b><br>
+            - Noktaları koy ve harfe sürükle.<br>
+            - "0-1" yaz ve <b>Yay</b> değerini değiştirerek çizgiyi anlık izle.
+        </div>
+
+        <button onclick="noktalariTemizle()" class="btn-danger">🗑️ Tüm Noktaları Sil</button>
+
+        <label>2. Çizgiler ve Yay Değerleri:</label>
+        <div id="cizgilerListesi" style="display:flex; flex-direction:column; gap:6px;">
+            <div class="cizgi-girdi">
+                <span>Çizgi 1:</span> 
+                <input type="text" class="cizgi-baglanti" placeholder="0-1" value="" oninput="onizlemeyiGuncelle()">
+                <input type="number" class="cizgi-bend" placeholder="Yay" value="0" oninput="onizlemeyiGuncelle()" title="Yay Değeri">
+            </div>
+        </div>
+        <button onclick="yeniCizgiKutusuEkle()" style="background:#2980b9;">➕ Yeni Çizgi Satırı Ekle</button>
+
+        <hr style="border-color: #7f8c8d; width: 100%;">
+
+        <button onclick="jsonUret()">🚀 JSON'u Üret</button>
+        <textarea id="jsonCikti" placeholder="Üretilen veri burada görünecek..." readonly></textarea>
+    </div>
+
+    <div id="workspace">
+        <svg id="svgCanvas" width="600" height="600" viewBox="0 0 600 600" onmousedown="kagitTiklandi(event)">
+            <rect id="bboxRect" x="0" y="0" width="0" height="0" fill="none" stroke="#bdc3c7" stroke-width="1" stroke-dasharray="4,4"/>
+            <text id="anaHarf" x="300" y="450" font-family="TemelYazi" font-size="400" text-anchor="middle" fill="#95a5a6">A</text>
+            
+            <!-- Canlı Önizleme Çizgilerinin Geleceği Katman -->
+            <g id="onizlemeGrubu"></g>
+            
+            <!-- Noktaların Grubu -->
+            <g id="noktalarGrubu"></g>
+        </svg>
+    </div>
+
+    <script>
+        const svg = document.getElementById('svgCanvas');
+        const noktalarGrubu = document.getElementById('noktalarGrubu');
+        const onizlemeGrubu = document.getElementById('onizlemeGrubu');
+        const anaHarf = document.getElementById('anaHarf');
+        const bboxRect = document.getElementById('bboxRect');
+        let noktalar = [];
+        let suruklenenNokta = null;
+        let sayac = 0;
+
+        function harfiGuncelle() {
+            let val = document.getElementById('harfInput').value || "A";
+            anaHarf.textContent = val;
+            noktalariTemizle();
+            setTimeout(bboxGuncelle, 10);
+        }
+
+        function bboxGuncelle() {
+            let bbox = anaHarf.getBBox();
+            bboxRect.setAttribute('x', bbox.x);
+            bboxRect.setAttribute('y', bbox.y);
+            bboxRect.setAttribute('width', bbox.width);
+            bboxRect.setAttribute('height', bbox.height);
+        }
+
+        function kagitTiklandi(e) {
+            if (e.target.tagName !== 'svg' && e.target.tagName !== 'text' && e.target.tagName !== 'rect') return;
+            let coords = ekranKoordinatiniSvgKoordinatinaCevir(e.clientX, e.clientY);
+            noktaYarat(coords.x, coords.y, sayac);
+            noktalar.push({ id: sayac, x: coords.x, y: coords.y });
+            sayac++;
+            onizlemeyiGuncelle();
+        }
+
+        function ekranKoordinatiniSvgKoordinatinaCevir(x, y) {
+            let pt = svg.createSVGPoint();
+            pt.x = x;
+            pt.y = y;
+            return pt.matrixTransform(svg.getScreenCTM().inverse());
+        }
+
+        function noktaYarat(x, y, id) {
+            let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            g.setAttribute('id', 'g-' + id);
+            g.setAttribute('transform', `translate(${x}, ${y})`);
+            
+            let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute('r', 12);
+            circle.setAttribute('class', 'nokta');
+            circle.setAttribute('data-id', id);
+            circle.addEventListener('mousedown', suruklemeBasla);
+            
+            let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.textContent = id;
+            text.setAttribute('class', 'nokta-yazi');
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('dy', '4');
+            
+            g.appendChild(circle);
+            g.appendChild(text);
+            noktalarGrubu.appendChild(g);
+        }
+
+        function suruklemeBasla(e) {
+            suruklenenNokta = e.target;
+            svg.addEventListener('mousemove', suruklemeSuruyor);
+            svg.addEventListener('mouseup', suruklemeBitti);
+            svg.addEventListener('mouseleave', suruklemeBitti);
+        }
+
+        function suruklemeSuruyor(e) {
+            if (!suruklenenNokta) return;
+            let coords = ekranKoordinatiniSvgKoordinatinaCevir(e.clientX, e.clientY);
+            let id = parseInt(suruklenenNokta.getAttribute('data-id'));
+            let nokta = noktalar.find(n => n.id === id);
+            nokta.x = coords.x;
+            nokta.y = coords.y;
+            document.getElementById('g-' + id).setAttribute('transform', `translate(${coords.x}, ${coords.y})`);
+            
+            // Nokta sürüklendikçe canlı önizleme çizgilerini de anlık güncelle!
+            onizlemeyiGuncelle();
+        }
+
+        function suruklemeBitti(e) {
+            suruklenenNokta = null;
+            svg.removeEventListener('mousemove', suruklemeSuruyor);
+            svg.removeEventListener('mouseup', suruklemeBitti);
+            svg.removeEventListener('mouseleave', suruklemeBitti);
+        }
+
+        function yeniCizgiKutusuEkle() {
+            let container = document.getElementById('cizgilerListesi');
+            let div = document.createElement('div');
+            div.className = 'cizgi-girdi';
+            div.innerHTML = `<span>Çizgi ${container.children.length + 1}:</span> <input type="text" class="cizgi-baglanti" placeholder="0-1" oninput="onizlemeyiGuncelle()"> <input type="number" class="cizgi-bend" placeholder="Yay" value="0" oninput="onizlemeyiGuncelle()">`;
+            container.appendChild(div);
+        }
+
+        function noktalariTemizle() {
+            noktalarGrubu.innerHTML = '';
+            onizlemeGrubu.innerHTML = '';
+            noktalar = [];
+            sayac = 0;
+            document.getElementById('jsonCikti').value = "";
+        }
+
+        // --- CANLI ÖNİZLEME (PHANTOM CURVE) MOTORU ---
+        function onizlemeyiGuncelle() {
+            onizlemeGrubu.innerHTML = ''; // Eski önizlemeleri temizle
+            let satirlar = document.querySelectorAll('.cizgi-girdi');
+
+            satirlar.forEach(satir => {
+                let baglantiInput = satir.querySelector('.cizgi-baglanti');
+                let bendInput = satir.querySelector('.cizgi-bend');
+
+                if (baglantiInput && baglantiInput.value.trim() !== "") {
+                    let parcalar = baglantiInput.value.split('-');
+                    if (parcalar.length === 2) {
+                        let id1 = parseInt(parcalar[0].trim());
+                        let id2 = parseInt(parcalar[1].trim());
+                        let bend = parseFloat(bendInput.value) || 0;
+
+                        let n1 = noktalar.find(n => n.id === id1);
+                        let n2 = noktalar.find(n => n.id === id2);
+
+                        if (n1 && n2) {
+                            let pathData = "";
+                            if (bend === 0) {
+                                // Düz çizgi
+                                pathData = `M ${n1.x} ${n1.y} L ${n2.x} ${n2.y}`;
+                            } else {
+                                // Kavisli yay (Bezier Q hesaplaması)
+                                let midX = (n1.x + n2.x) / 2;
+                                let midY = (n1.y + n2.y) / 2;
+                                let dx = n2.x - n1.x;
+                                let dy = n2.y - n1.y;
+                                let len = Math.sqrt(dx * dx + dy * dy);
+                                if (len > 0) {
+                                    // Normal vektör dik açısı
+                                    let nx = -dy / len;
+                                    let ny = dx / len;
+                                    let cx = midX + nx * bend;
+                                    let cy = midY + ny * bend;
+                                    pathData = `M ${n1.x} ${n1.y} Q ${cx} ${cy} ${n2.x} ${n2.y}`;
+                                } else {
+                                    pathData = `M ${n1.x} ${n1.y} L ${n2.x} ${n2.y}`;
+                                }
+                            }
+
+                            let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                            path.setAttribute('d', pathData);
+                            path.setAttribute('class', 'onizleme-cizgi');
+                            onizlemeGrubu.appendChild(path);
+                        }
+                    }
+                }
+            });
+        }
+
+        function jsonUret() {
+            let harf = document.getElementById('harfInput').value;
+            let bbox = anaHarf.getBBox();
+            let uretilenNoktalar = {};
+            
+            noktalar.forEach(n => {
+                let relativeX = ((n.x - bbox.x) / bbox.width).toFixed(4);
+                let relativeY = ((n.y - bbox.y) / bbox.height).toFixed(4);
+                uretilenNoktalar[n.id] = [parseFloat(relativeX), parseFloat(relativeY)];
+            });
+
+            let cizgiSatirlari = document.querySelectorAll('.cizgi-girdi');
+            let uretilenCizgiler = [];
+            
+            cizgiSatirlari.forEach(satir => {
+                let baglantiInput = satir.querySelector('.cizgi-baglanti');
+                let bendInput = satir.querySelector('.cizgi-bend');
+                
+                if(baglantiInput && baglantiInput.value.trim() !== "") {
+                    let parcalar = baglantiInput.value.split('-');
+                    if(parcalar.length === 2) {
+                        let from = parseInt(parcalar[0].trim());
+                        let to = parseInt(parcalar[1].trim());
+                        let bend = parseFloat(bendInput.value) || 0;
+                        uretilenCizgiler.push([from, to, bend]);
+                    }
+                }
+            });
+
+            let finalJSON = {
+                "harf": harf,
+                "anchors": uretilenNoktalar,
+                "strokes": uretilenCizgiler
+            };
+
+            // JSON'u üret
+            let jsonString = JSON.stringify(finalJSON, null, 2);
+            
+            // Okunaklılık için sayı dizilerini (array) tek satıra sıkıştır (Regex Sihri)
+            jsonString = jsonString.replace(/\[\s+([\d.-]+),\s+([\d.-]+)\s+\]/g, '[$1, $2]'); // Koordinatlar için (2'li)
+            jsonString = jsonString.replace(/\[\s+([\d.-]+),\s+([\d.-]+),\s+([\d.-]+)\s+\]/g, '[$1, $2, $3]'); // Çizgi yayları için (3'lü)
+
+            let hazirKod = `// --- "${harf}" HARFİ ---\nharfRotasiEkle(${jsonString});\n`;
+            
+            document.getElementById('jsonCikti').value = hazirKod;
+        }
+        window.onload = () => { bboxGuncelle(); };
+    </script>
+</body>
+</html>

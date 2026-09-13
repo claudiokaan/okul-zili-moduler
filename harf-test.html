@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Motor Test Odası</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background: #f4f6f9; margin: 0; padding: 20px; }
+        
+        /* Fontun yolunu kendi projene göre düzenle */
+        @font-face {
+            font-family: 'TemelYazi';
+            src: url('Fontlar/TemelYazi.otf') format('opentype');
+            font-weight: normal;
+        }
+
+        #tahta { background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 12px; margin-top: 20px; }
+        
+        /* Çizim Stilleri (Kırmızı çizgiler, oklar vs.) */
+        .kilavuz-cizgi { fill: none; stroke: #e74c3c; stroke-width: 4; stroke-dasharray: 8,6; stroke-linecap: round; }
+        .ok-ucu { fill: #e74c3c; }
+        .numara-daire { fill: #e74c3c; stroke: #fff; stroke-width: 2; }
+        .numara-yazi { fill: #fff; font-size: 14px; font-weight: bold; user-select: none; pointer-events: none; }
+        
+        .kontrol { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { padding: 10px; font-size: 18px; text-align: center; width: 60px; border: 1px solid #ccc; border-radius: 6px; }
+        button { padding: 10px 20px; font-size: 16px; background: #2980b9; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="kontrol">
+        <input type="text" id="harfSecici" value="A" maxlength="1">
+        <button onclick="harfiCizdir()">Çizimi Başlat!</button>
+    </div>
+
+    <!-- Test SVG Tahtamız -->
+    <svg id="tahta" width="600" height="600" viewBox="0 0 600 600">
+        <text id="hedefHarf" x="300" y="450" font-family="TemelYazi" font-size="400" text-anchor="middle" fill="#bdc3c7">A</text>
+        <g id="cizimKatmani"></g>
+    </svg>
+
+    <!-- 1. Senin ürettiğin ve kaydettiğin JSON arşivi -->
+    <script src="harf-rotalari.js"></script>
+    
+    <!-- 2. Aşağıda kuracağımız Çizim Motoru -->
+    <script src="cizim-motoru.js"></script>
+
+</body>
+</html>

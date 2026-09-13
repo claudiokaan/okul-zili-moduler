@@ -1,0 +1,241 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Quicksand:wght@300;400&display=swap');
+
+/* --- YEREL MEB FONTLARI --- */
+
+@font-face {
+    font-family: 'TemelYazi';
+    src: url('Fontlar/TemelYazi.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TemelYazi-Bold';
+    src: url('Fontlar/TemelYazi-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TemelYazi-Light';
+    src: url('Fontlar/TemelYazi-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TemelYazi-KesikCizgi';
+    src: url('Fontlar/TemelYazi-KesikCizgi.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TemelYazi-Kontur';
+    src: url('Fontlar/TemelYazi-Kontur.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TemelYazi-KesikKontur';
+    src: url('Fontlar/TemelYazi-KesikKontur.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TemelYazi-Kilavuz';
+    src: url('Fontlar/TemelYazi-Kilavuz.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* OTOMASYONDA KULLANACAĞIMIZ HAZIR FONT SINIFLARI */
+.meb-temel { font-family: 'TemelYazi', sans-serif; font-size: 48px; line-height: 1.5; }
+.meb-bold { font-family: 'TemelYazi-Bold', sans-serif; font-weight: bold; font-size: 48px; line-height: 1.5; }
+.meb-light { font-family: 'TemelYazi-Light', sans-serif; font-weight: 300; font-size: 48px; line-height: 1.5; }
+.meb-kesik { font-family: 'TemelYazi-KesikCizgi', sans-serif; font-size: 48px; line-height: 1.5; }
+.meb-kontur { font-family: 'TemelYazi-Kontur', sans-serif; font-size: 48px; line-height: 1.5; }
+.meb-kesik-kontur { font-family: 'TemelYazi-KesikKontur', sans-serif; font-size: 48px; line-height: 1.5; }
+.meb-kilavuz { font-family: 'TemelYazi-Kilavuz', sans-serif; font-size: 48px; line-height: 1.5; }
+
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background-color: #2b2b2b; 
+    margin: 0;
+    padding: 20px;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+}
+
+.kontrol-paneli {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    /* ESKİSİ: width: 320px; */
+    width: 400px; /* <--- 80px daha genişletildi, içerik rahatlayacak */
+    height: 100%;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.liste-paneli {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    /* YENİ EKLENDİ: Ortadaki sütuna sabit bir genişlik veriyoruz */
+    width: 350px; /* <--- Burası da 100px kadar genişletildi */
+    height: 100%;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.onizleme-paneli {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    overflow-y: auto;
+    padding-bottom: 50px;
+}
+
+h2 { margin-top: 0; font-size: 18px; color: #333; border-bottom: 2px solid #4DB8FF; padding-bottom: 5px; }
+
+label { display: block; margin-top: 10px; font-size: 12px; font-weight: bold; }
+input, select { width: 100%; margin-top: 5px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;}
+button { width: 100%; padding: 10px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; transition: 0.2s;}
+
+.btn-ekle { background-color: #2ecc71; color: white; margin-top: 20px; }
+.btn-ekle:hover { background-color: #27ae60; }
+.btn-yazdir { background-color: #e74c3c; color: white; }
+
+/* SÜRÜKLE BIRAK TASARIMI */
+.liste-item {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-left: 4px solid #4DB8FF;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: grab;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.liste-item:active {
+    cursor: grabbing;
+    transform: scale(0.98);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.mini-kapsayici {
+    transform-origin: top center;
+    transform: scale(0.85); 
+    margin-top: 10px;
+}
+
+.A4 {
+    width: 210mm;
+    height: 297mm; 
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: white; 
+    background-size: 100% 100%;
+    background-position: top center;
+    background-repeat: no-repeat;
+    transform: scale(0.7); /* Kağıdı %30 küçültür, ekrana tam sığdırır */
+    transform-origin: top center; /* Küçülürken yukarıdan asılı kalmasını sağlar */
+    margin-bottom: -80mm; /* Kağıt küçülünce altta oluşan gereksiz boşluğu siler */
+}
+
+/* KENDİ GÖZÜNLE DÜZELTTİĞİN DİNAMİK HEADER VE FONT AYARLARIN */
+.dinamik-header {
+    position: absolute;
+    top: 15mm;
+    left: 30mm; 
+    text-align: left;
+    color: white; 
+    text-transform: uppercase;
+}
+#yazdir-sinif {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 20px; 
+    font-weight: 300; 
+    letter-spacing: 1.5px;
+    margin-bottom: 2px;
+}
+#yazdir-konu {
+    font-family: 'Nunito', sans-serif;
+    font-size: 32px; 
+    font-weight: 800;
+    line-height: 0.9;
+}
+
+.header-boslugu { height: 45mm; }
+.icerik-alani { flex-grow: 1; padding: 0 15mm; }
+
+/* --- KESİN ÇÖZÜM: SORU ALANINI SABİTLEME --- */
+#soru-alani {
+    position: absolute !important; /* Diğer tüm esneme kurallarını ezer */
+    top: 48mm !important; /* Header'ın tam altı. ASLA YUKARI ÇIKAMAZ! */
+    left: 0;
+    width: 100%;
+    height: 220mm !important; /* Footer'a kadar olan güvenli sınır (297 - 48 üst - 29 alt = 220) */
+    padding: 0 15mm;
+    
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-content: start !important; /* Sorular sadece tavandan aşağı dizilir */
+}
+
+/* Soru kutusunun içi tertemiz kalacak */
+.soru-kutusu {
+    position: relative; 
+    text-align: right;
+    font-size: 32px; 
+    font-family: 'Comic Sans MS', cursive, sans-serif; 
+    width: 80px; 
+    margin: 0 auto;
+    line-height: 1.2;
+}
+
+.islem-isareti {
+    position: absolute; 
+    left: 0px; 
+    bottom: 5px; 
+    font-size: 32px;
+}
+.cizgi { border-bottom: 3px solid black; margin-top: 2px; margin-bottom: 5px; }
+
+/* TOOLTIP TASARIMI */
+.tooltip-container { position: relative; display: inline-block; cursor: help; }
+.info-icon { background-color: #4DB8FF; color: white; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+
+/* Kutu artık yukarıya değil, İKONUN SAĞINA doğru açılacak */
+.tooltip-text { visibility: hidden; width: 260px; background-color: #2b2b2b; color: #fff; text-align: left; border-radius: 6px; padding: 10px; position: absolute; z-index: 100; top: -10px; left: 150%; margin-left: 0; opacity: 0; transition: opacity 0.3s; font-size: 12px; line-height: 1.4; box-shadow: 0 4px 8px rgba(0,0,0,0.3); pointer-events: none; }
+
+/* Kutunun minik okunu (üçgeni) aşağıdan alıp SOLA (ikona bakacak şekilde) çeviriyoruz */
+.tooltip-text::after { content: ""; position: absolute; top: 15px; right: 100%; left: auto; margin-left: 0; border-width: 5px; border-style: solid; border-color: transparent #2b2b2b transparent transparent; }
+
+.tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+@media print {
+    body { background-color: white; padding: 0; margin: 0; overflow: visible;}
+    .kontrol-paneli, .liste-paneli, .no-print { display: none !important; }
+    .onizleme-paneli { display: block; overflow: visible; padding: 0;}
+    .mini-kapsayici { transform: scale(1); margin: 0; }
+    .A4 { box-shadow: none; width: 210mm; height: 297mm; }
+* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }}
