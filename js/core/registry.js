@@ -9,31 +9,59 @@
         
         // Yeni bir soru tipini sisteme kaydeder
         register: function(definition) {
-            if (!definition) {
-                console.error("Registry: Tanimsiz bir modul kaydedilmeye calisildi.");
+            // 1. Definition bir obje mi kontrolü
+            if (!definition || typeof definition !== 'object') {
+                console.error("Registry: Gecersiz kayit. Tanimi yapilan modul bir obje olmalidir.");
                 return false;
-            }
-            if (!definition.id) {
-                console.error("Registry: Gecersiz kayit. Modulun 'id' alani zorunludur.", definition);
-                return false;
-            }
-            if (_items[definition.id]) {
-                console.warn("Registry: [" + definition.id + "] ID'li modul zaten kayitli. Uzerine yazilmiyor.");
-                return false; // Çakışma durumunda sessizce üzerine yazmayı reddeder ve uyarır
             }
 
+            // 2. Zorunlu Alanlar: ID ve Name (Boş olmayan string olmalı)
+            if (typeof definition.id !== 'string' || definition.id.trim() === '') {
+                console.error("Registry: Gecersiz kayit. Modulun 'id' alani bos olmayan bir metin (string) olmalidir.", definition);
+                return false;
+            }
+            if (typeof definition.name !== 'string' || definition.name.trim() === '') {
+                console.error("Registry: Gecersiz kayit. Modulun 'name' alani bos olmayan bir metin (string) olmalidir.", definition);
+                return false;
+            }
+
+            // 3. Duplicate ID Kontrolü (Mevcut davranış korunuyor)
+            if (_items[definition.id]) {
+                console.warn("Registry: [" + definition.id + "] ID'li modul zaten kayitli. Uzerine yazilmiyor.");
+                return false;
+            }
+
+            // 4. Opsiyonel Callback Doğrulaması (Eğer verilmişse mutlaka fonksiyon olmalı)
+            const optionalCallbacks = [
+                'createDefault', 
+                'buildEditor', 
+                'collectData', 
+                'renderPreview', 
+                'renderA4', 
+                'validate'
+            ];
+
+            for (let i = 0; i < optionalCallbacks.length; i++) {
+                const cbName = optionalCallbacks[i];
+                if (definition[cbName] !== undefined && typeof definition[cbName] !== 'function') {
+                    console.error("Registry: Gecersiz kayit. [" + definition.id + "] modulundeki '" + cbName + "' alani bir fonksiyon olmalidir.", definition);
+                    return false;
+                }
+            }
+
+            // Tüm kontrollerden geçti, depoya kaydet
             _items[definition.id] = definition;
             return true;
         },
 
         // ID'sine göre soru tipini getirir
         get: function(id) {
-            return _items[id] || null; // Bulunamazsa güvenli bir şekilde null döner
+            return _items[id] || null;
         },
 
         // Bu ID'ye ait bir kayıt var mı kontrol eder
         has: function(id) {
-            return !!_items[id]; // true veya false döner
+            return !!_items[id];
         },
 
         // Kayıtlı tüm soru tiplerini dizi olarak döndürür
