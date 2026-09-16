@@ -3687,7 +3687,7 @@
                         } else {
                             let mirasDers = kagitIcerigi.length > 0 ? kagitIcerigi[0].ders : "ilkokuma"; 
                             kagitIcerigi.push({
-                                id: Date.now() + Math.random(), tip: "zengin-metin", icerik: zenginEditor.innerHTML, bosluk: genelSatirBoslugu, ders: mirasDers, unite: uniteSecimi || "Okuma Yazma", konu: "Serbest Metin Çalışması", kisaKonu: "Serbest Metin", zenginTema: secilenTema, zenginStil: secilenStil, renk: secilenRenk, genelScale: 100, genelX: 0, genelY: 0, metinGenislik: 100, metinYukseklik: 0
+                                kind: "content", id: Date.now() + Math.random(), tip: "zengin-metin", icerik: zenginEditor.innerHTML, bosluk: genelSatirBoslugu, ders: mirasDers, unite: uniteSecimi || "Okuma Yazma", konu: "Serbest Metin Çalışması", kisaKonu: "Serbest Metin", zenginTema: secilenTema, zenginStil: secilenStil, renk: secilenRenk, genelScale: 100, genelX: 0, genelY: 0, metinGenislik: 100, metinYukseklik: 0
                             });
                         }
                         arayuzuGuncelle(); metinMotorunuGecisYap(); return; 
@@ -3739,7 +3739,7 @@
                         }
 
                         let madde = {
-                            id: Date.now() + Math.random(), sinif: sinifSecimi, ders: dersSecimi, unite: uniteSecimi, konu: konuSecimi, kisaKonu: kisaIsim, soruTipi: secilenSoruTipi, fontBoyutu: (["Parmakla Takip Etme", "Dış Hat Boyama"].includes(secilenSoruTipi) ? 250 : 80), mufredatSirasi: mufredatSirasi, tip: dersSecimi === 'matematik' ? "matematik" : "ilkokuma",
+                            kind: "question", id: Date.now() + Math.random(), sinif: sinifSecimi, ders: dersSecimi, unite: uniteSecimi, konu: konuSecimi, kisaKonu: kisaIsim, soruTipi: secilenSoruTipi, fontBoyutu: (["Parmakla Takip Etme", "Dış Hat Boyama"].includes(secilenSoruTipi) ? 250 : 80), mufredatSirasi: mufredatSirasi, tip: dersSecimi === 'matematik' ? "matematik" : "ilkokuma",
                             baslangicResmi: typeof aktifBaslangicResmiTek !== 'undefined' ? aktifBaslangicResmiTek : "", bitisResmi: typeof aktifBitisResmiTek !== 'undefined' ? aktifBitisResmiTek : "", arkaplanResmi: typeof aktifArkaplanResmi !== 'undefined' ? aktifArkaplanResmi : "",
                             baslangicResimleri: [...aktifBaslangicResimleri], bitisResimleri: [...aktifBitisResimleri],
                             gridCols: gCols, gridRows: gRows, gridTema: gTema, gridStil: gStil, gridYuv: gYuv, gridResimleri: {...aktifGridResimleri}, gridMetinleri: {...aktifGridMetinleri}, 
