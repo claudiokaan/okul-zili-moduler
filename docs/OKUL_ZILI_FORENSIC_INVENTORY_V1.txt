@@ -1,0 +1,1312 @@
+====================================================================================================
+OKUL ZİLİ V1.0 / V3 MIGRASYON ÖNCESİ - SCRIPT.JS ADLİ BİLİŞİM (FORENSIC) ENVANTERİ
+====================================================================================================
+Kaynak dosya: script(5).js
+Kaynak SHA-256: 2e7241f019740d4d12003bd8138ba7ec62e99120517ae90565c0dc5bda1d1422
+Boyut: 408,616 byte
+Satır sayısı (splitlines): 5,946
+Node syntax kontrolü: GEÇTİ (node --check)
+Analiz yöntemi: lexical masking + brace-balanced function extraction + exact known-function call graph + global/DOM/static tarama.
+Not: Bu rapor MİMARİ ÖNERİ içermez; mevcut kodun gözlenen anatomisini kaydeder.
+
+ÖNEMLİ SINIRLAR / GÜVEN DÜZEYİ
+- Function definition sayımı ve satır sınırları: yüksek güven (brace-balanced, string/comment maskeli).
+- Named-function caller/callee ilişkileri: yüksek güven; dinamik çağrılar (örn. window[name]()) statik olarak çözülemeyebilir.
+- Global read/write: statik ve muhafazakâr analiz; property mutation ve dinamik erişimlerde insan denetimi gerekebilir.
+- Inline event exposure: script.js içinde üretilen HTML/template stringlerinden tarandı. Ayrı index.html bu raporun girdisi değildir.
+- External dependencies: script.js içinde tanımlı olmayan önemli semboller; başka JS/HTML dosyalarıyla çapraz kontrol edilmelidir.
+
+====================================================================================================
+A. TOP-LEVEL GLOBAL / STATE ADAYLARI
+====================================================================================================
+- aktifBaslangicResimleri (satır 2) :: let aktifBaslangicResimleri = ["", "", "", "", ""];
+- aktifBitisResimleri (satır 3) :: let aktifBitisResimleri = ["", "", "", "", ""];
+- aktifArkaplanResmi (satır 4) :: let aktifArkaplanResmi = "";
+- aktifBaslangicResmiTek (satır 6) :: let aktifBaslangicResmiTek = "";
+- aktifBitisResmiTek (satır 7) :: let aktifBitisResmiTek = "";
+- aktifGridResimleri (satır 11) :: let aktifGridResimleri = {};
+- aktifGridMetinleri (satır 12) :: let aktifGridMetinleri = {}; // YENİ: Yazı hafızası!
+- kutuphaneHedefIndex (satır 23) :: let kutuphaneHedefIndex = null;
+- kutuphaneHedefTur (satır 24) :: let kutuphaneHedefTur = null;
+- seciliKutuphaneKelime (satır 25) :: let seciliKutuphaneKelime = null;
+- kagitIcerigi (satır 306) :: let kagitIcerigi = [];
+- genelSatirBoslugu (satır 307) :: let genelSatirBoslugu = 15; // Kağıdın ilk açılıştaki standart alt boşluğu
+- kagitGecmisi (satır 1341) :: let kagitGecmisi = [];
+- kagitGelecegi (satır 1342) :: let kagitGelecegi = [];
+- suruklenenSira (satır 3816) :: let suruklenenSira = null;
+- cizimYapiyorMu (satır 5351) :: let cizimYapiyorMu = false;
+- anlikCizimYolu (satır 5352) :: let anlikCizimYolu = "";
+- duzenlenenMetinIndex (satır 5647) :: let duzenlenenMetinIndex = null;
+
+====================================================================================================
+B. TOP-LEVEL STATIC / DATA BLOĞU ADAYLARI
+====================================================================================================
+- doodleKutuphanesi (satır 233) :: const doodleKutuphanesi = {
+- mebHarfSirasiBuyuk (satır 310) :: const mebHarfSirasiBuyuk = ['A','N','E','T','İ','L','O','K','U','R','I','M','Ü','S','Ö','Y','D','Z','Ç','B','G','C','Ş','P','H','V','Ğ','F','J'];
+- mebHarfSirasiKucuk (satır 311) :: const mebHarfSirasiKucuk = ['a','n','e','t','i','l','o','k','u','r','ı','m','ü','s','ö','y','d','z','ç','b','g','c','ş','p','h','v','ğ','f','j'];
+- satirAraligiCizgileri (satır 542) :: const satirAraligiCizgileri = [
+- harfBaslangic (satır 1451) :: const harfBaslangic = {
+
+====================================================================================================
+C. FONKSİYON ANATOMİSİ
+====================================================================================================
+
+001. turkceTemizle  [satır 17-21]
+   Duplicate status : EVET (2 tanım)
+   Callers          : bulmacaOlustur, harfKaristirmaOlustur, kriptogramOlustur, kutuphanedeAra, miniSudokuOlustur, sifreGorseliVer
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+002. kutuphaneModaliAc  [satır 27-33]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 690,936,970,998,1075,1217,1251,1263,1284,1310,1317
+   Callees          : kutuphanedeAra
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kutuphaneHedefIndex, kutuphaneHedefTur
+   DOM APIs         : getElementById
+   DOM targets      : 'kutuphane-arama', 'kutuphane-modali'
+   Inline exposure  : VAR → satır 690; satır 936; satır 970; satır 998; satır 1075; satır 1217; satır 1251; satır 1263; satır 1284; satır 1310; satır 1317
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+003. kutuphaneModaliKapat  [satır 35-42]
+   Duplicate status : Hayır
+   Callers          : seciliGorseliKullan
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kutuphaneHedefIndex, kutuphaneHedefTur, seciliKutuphaneKelime
+   DOM APIs         : getElementById, innerHTML
+   DOM targets      : 'btn-kullan', 'kutuphane-modali', 'vitrin-baslik', 'vitrin-kutu'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+004. kutuphanedeAra  [satır 44-96]
+   Duplicate status : Hayır
+   Callers          : kutuphaneModaliAc
+   Callees          : turkceTemizle, vitrineAl
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : appendChild, createElement, getBBox, getElementById, innerHTML, removeChild
+   DOM targets      : 'kutuphane-arama', 'kutuphane-liste'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : svgKutuphanesi
+   Async/side APIs  : Yok
+
+005. svgYiKesikliCizgiyeCevir  [satır 99-149]
+   Duplicate status : Hayır
+   Callers          : seciliGorseliKullan, vitrineAl
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : appendChild, createElement, getBBox, getElementById, innerHTML, removeChild
+   DOM targets      : 'temp-svg'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+006. vitriniGuncelle  [satır 152-156]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : vitrineAl
+   Global reads     : seciliKutuphaneKelime
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+007. vitrineAl  [satır 158-174]
+   Duplicate status : Hayır
+   Callers          : kutuphanedeAra, vitriniGuncelle, HTML inline/template @ satır 93
+   Callees          : svgYiKesikliCizgiyeCevir
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : seciliKutuphaneKelime
+   DOM APIs         : getElementById, getElementsByName, innerHTML
+   DOM targets      : 'btn-kullan', 'svg-stil-secim', 'vitrin-baslik', 'vitrin-kutu'
+   Inline exposure  : VAR → satır 93
+   External refs    : svgKutuphanesi
+   Async/side APIs  : Yok
+
+008. seciliGorseliKullan  [satır 176-205]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : basligiGuncelle, kutuphaneModaliKapat, svgYiKesikliCizgiyeCevir
+   Global reads     : kutuphaneHedefIndex, seciliKutuphaneKelime
+   Global writes    : aktifBaslangicResimleri, aktifBaslangicResmiTek, aktifBitisResimleri, aktifBitisResmiTek, aktifGridResimleri, kutuphaneHedefTur
+   DOM APIs         : getElementsByName
+   DOM targets      : 'svg-stil-secim'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : svgKutuphanesi
+   Async/side APIs  : Yok
+
+009. metinDegistiGrid  [satır 209-212]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 1210,1219
+   Callees          : basligiGuncelle
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : aktifGridMetinleri
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 1210; satır 1219
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+010. resmiCevirGrid  [satır 214-223]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 727,780,837,902,937,999,1076,1218
+   Callees          : basligiGuncelle
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : aktifGridResimleri
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 727; satır 780; satır 837; satır 902; satır 937; satır 999; satır 1076; satır 1218
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : FileReader
+
+011. gridBoyutDegisti  [satır 225-228]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 1187,1191
+   Callees          : basligiGuncelle, nesneYuklemeAlaniniGuncelle
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 1187; satır 1191
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+012. olusturBorderImage  [satır 269-279]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, heceBirlestirmeOlustur, heceVeKelimeMotoru, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : doodleKutuphanesi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+013. secimMenuHTML  [satır 281-294]
+   Duplicate status : Hayır
+   Callers          : listeyiCiz, nesneYuklemeAlaniniGuncelle, TOP-LEVEL/anonymous callback @ satır 5359,5360
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+014. turkceTemizle  [satır 298-302]
+   Duplicate status : EVET (2 tanım)
+   Callers          : bulmacaOlustur, harfKaristirmaOlustur, kriptogramOlustur, kutuphanedeAra, miniSudokuOlustur, sifreGorseliVer
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+015. isSatirCizgisi  [satır 314-338]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+016. generateLiveRowSVG  [satır 340-537]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : cizgiKutuphanesi
+   Async/side APIs  : Yok
+
+017. kilavuzSatirSayisiDegistir  [satır 551-555]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : 'satir-sayisi-deger-${index}'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+018. resmiCevirTekli  [satır 564-574]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 691,971,1285,1301,1311,1318
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : aktifArkaplanResmi, aktifBaslangicResmiTek, aktifBitisResmiTek
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 691; satır 971; satır 1285; satır 1301; satır 1311; satır 1318
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : FileReader
+
+019. resmiCevirSpagetti  [satır 576-586]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 1242,1252,1264
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : aktifArkaplanResmi, aktifBaslangicResimleri, aktifBitisResimleri
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 1242; satır 1252; satır 1264
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : FileReader
+
+020. aktifResimDegistir  [satır 589-600]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3915
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 3915
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : FileReader
+
+021. nesneYuklemeAlaniniGuncelle  [satır 603-1325]
+   Duplicate status : Hayır
+   Callers          : gridBoyutDegisti, konuDegisti, soruTipiDegisti, HTML inline/template @ satır 737,752,789,846,862,876,911,955,974,1008,1022,1036,1051,1054,1085,1088,1110,1113,1116,1652,1671,1752
+   Callees          : secimMenuHTML
+   Global reads     : aktifGridMetinleri, aktifGridResimleri
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : getElementById, innerHTML, querySelectorAll
+   DOM targets      : 'grid-col-input', 'grid-row-input', 'grid-yuvarlak-input', 'input[name=', 'konu-secimi', 'nesne-yukleme-alani', 'soru-tipi-secimi', 'spagetti-dropdown-secimi'
+   Inline exposure  : VAR → satır 737; satır 752; satır 789; satır 846; satır 862; satır 876; satır 911; satır 955; satır 974; satır 1008; satır 1022; satır 1036; satır 1051; satır 1054; satır 1085; satır 1088; satır 1110; satır 1113; satır 1116; satır 1652; satır 1671; satır 1752
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+022. renkDegisti  [satır 1328-1331]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3890,3899
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 3890; satır 3899
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+023. gridAyarDegisti  [satır 1333-1338]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3903,3909
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 3903; satır 3909
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+024. okCiz  [satır 1351-1402]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+025. masterHedefSec  [satır 1408-1411]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 4009
+   Callees          : arayuzuGuncelle
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 4009
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+026. evrenselKontrolDegisti  [satır 1413-1448]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 4024,4026,4027,4028,4035,4040,4045,4050
+   Callees          : kagidiCiz
+   Global reads     : kagitIcerigi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : 'master-input-${ayarTipi}-${index}'
+   Inline exposure  : VAR → satır 4024; satır 4026; satır 4027; satır 4028; satır 4035; satır 4040; satır 4045; satır 4050
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+027. pAyarDegisti  [satır 1485-1503]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : arayuzuGuncelle
+   Global reads     : harfBaslangic, kagitIcerigi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+028. durumuKaydet  [satır 1505-1508]
+   Duplicate status : Hayır
+   Callers          : bosKilavuzSatirEkle, listeyeEkle, soruyuCogalt, soruyuSil, suruklemeyiBirak
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : kagitGecmisi, kagitIcerigi
+   Global writes    : kagitGelecegi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+029. geriAl  [satır 1510-1516]
+   Duplicate status : Hayır
+   Callers          : TOP-LEVEL/anonymous callback @ satır 560
+   Callees          : arayuzuGuncelle
+   Global reads     : kagitGecmisi, kagitGelecegi, kagitIcerigi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+030. ileriAl  [satır 1518-1524]
+   Duplicate status : Hayır
+   Callers          : TOP-LEVEL/anonymous callback @ satır 561
+   Callees          : arayuzuGuncelle
+   Global reads     : kagitGecmisi, kagitGelecegi, kagitIcerigi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+031. sinifDegisti  [satır 1527-1539]
+   Duplicate status : Hayır
+   Callers          : TOP-LEVEL/anonymous callback @ satır 5373
+   Callees          : dersDegisti
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : appendChild, createElement, getElementById, innerHTML
+   DOM targets      : 'ders-secimi', 'sinif-secimi'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : dersIsimleri, mufredat
+   Async/side APIs  : Yok
+
+032. dersDegisti  [satır 1541-1557]
+   Duplicate status : Hayır
+   Callers          : sinifDegisti
+   Callees          : uniteDegisti
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : appendChild, createElement, getElementById, innerHTML
+   DOM targets      : 'ders-secimi', 'sinif-secimi', 'unite-secimi', 'yazdir-sinif'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : mufredat
+   Async/side APIs  : Yok
+
+033. uniteDegisti  [satır 1559-1575]
+   Duplicate status : Hayır
+   Callers          : dersDegisti
+   Callees          : konuDegisti
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : appendChild, createElement, getElementById, innerHTML
+   DOM targets      : 'ders-secimi', 'konu-secimi', 'sinif-secimi', 'unite-secimi'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : mufredat
+   Async/side APIs  : Yok
+
+034. konuDegisti  [satır 1577-1690]
+   Duplicate status : Hayır
+   Callers          : metinMotorunuGecisYap, uniteDegisti
+   Callees          : basligiGuncelle, nesneYuklemeAlaniniGuncelle
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : appendChild, createElement, getElementById, innerHTML
+   DOM targets      : 'bos-satir-ekle-btn', 'ders-secimi', 'konu-ornek-resim', 'konu-secimi', 'konu-tooltip', 'labirent-ayarlari', 'matematik-ayarlari', 'ornek-gorsel-alani', 'ozellik-kutulari', 'ozellikler-alani', 'sinif-secimi', 'soru-tipi-label', 'soru-tipi-secimi', 'unite-secimi', 'zorluk-alani'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : harfSoruTipleri, heceSoruTipleri, mufredat
+   Async/side APIs  : Yok
+
+035. soruTipiDegisti  [satır 1692-1790]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : basligiGuncelle, nesneYuklemeAlaniniGuncelle
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : appendChild, createElement, getElementById, innerHTML, querySelector
+   DOM targets      : 'bos-satir-ekle-btn', 'ders-secimi', 'input[value=', 'konu-secimi', 'nesne-yukleme-alani', 'ozellik-kutulari', 'ozellikler-alani', 'soru-tipi-secimi', 'zorluk-alani'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : evrenselZitliklar, harfSoruTipleri
+   Async/side APIs  : Yok
+
+036. varyasyonKontrol  [satır 1792-1808]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 1671,1752
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : querySelectorAll
+   DOM targets      : 'input[name='
+   Inline exposure  : VAR → satır 1671; satır 1752
+   External refs    : evrenselZitliklar
+   Async/side APIs  : Yok
+
+037. basligiGuncelle  [satır 1810-1840]
+   Duplicate status : Hayır
+   Callers          : gridBoyutDegisti, konuDegisti, metinDegistiGrid, resmiCevirGrid, seciliGorseliKullan, soruTipiDegisti, HTML inline/template @ satır 660,664,670,700,737,752,789,802,807,846,862,876,911,932,955,974,1008,1022,1036,1051,1054,1085,1088,1110,1113,1116,1147,1151,1157,1175,1179,1196,1290,1652,1671,1752
+   Callees          : canliOnizlemeyiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById, innerHTML, querySelectorAll
+   DOM targets      : 'ders-secimi', 'input[name=', 'konu-secimi', 'ozel-baslik', 'sinif-secimi', 'soru-tipi-secimi', 'unite-secimi', 'yazdir-konu'
+   Inline exposure  : VAR → satır 660; satır 664; satır 670; satır 700; satır 737; satır 752; satır 789; satır 802; satır 807; satır 846; satır 862; satır 876; satır 911; satır 932; satır 955; satır 974; satır 1008; satır 1022; satır 1036; satır 1051; satır 1054; satır 1085; satır 1088; satır 1110; satır 1113; satır 1116; satır 1147; satır 1151; satır 1157; satır 1175; satır 1179; satır 1196; satır 1290; satır 1652; satır 1671; satır 1752
+   External refs    : mufredat
+   Async/side APIs  : Yok
+
+038. heceBirlestirmeOlustur  [satır 1843-1904]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : olusturBorderImage
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+039. heceVeKelimeMotoru  [satır 1907-1974]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : olusturBorderImage
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+040. serbestYaziOlustur  [satır 1977-2037]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+041. bulmacaOlustur  [satır 2040-2145]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : turkceTemizle
+   Global reads     : aktifGridResimleri
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : BulmacaMotoru, svgKutuphanesi
+   Async/side APIs  : Yok
+
+042. kelimeAviOlustur  [satır 2148-2200]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : KelimeAviMotoru
+   Async/side APIs  : Yok
+
+043. kriptogramOlustur  [satır 2203-2291]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : sifreGorseliVer, turkceTemizle
+   Global reads     : aktifGridResimleri
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : KriptogramMotoru, svgKutuphanesi
+   Async/side APIs  : Yok
+
+044. sifreGorseliVer  [satır 2224-2249]  [NESTED: kriptogramOlustur içinde]
+   Duplicate status : Hayır
+   Callers          : kriptogramOlustur
+   Callees          : turkceTemizle
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : svgKutuphanesi
+   Async/side APIs  : Yok
+
+045. harfKaristirmaOlustur  [satır 2294-2377]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : turkceTemizle
+   Global reads     : aktifGridResimleri
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : HarfKaristirmaMotoru, svgKutuphanesi
+   Async/side APIs  : Yok
+
+046. labirentKelimeOlustur  [satır 2380-2436]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : LabirentKelimeMotoru
+   Async/side APIs  : Yok
+
+047. kelimeZinciriOlustur  [satır 2439-2494]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : KelimeZinciriMotoru
+   Async/side APIs  : Yok
+
+048. miniSudokuOlustur  [satır 2497-2581]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : turkceTemizle
+   Global reads     : aktifGridResimleri
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : MiniSudokuMotoru, svgKutuphanesi
+   Async/side APIs  : Yok
+
+049. okudugunuEslestirmeOlustur  [satır 2584-2628]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+050. okudugunuCizmeOlustur  [satır 2631-2645]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+051. okudugunuBoyamaOlustur  [satır 2648-2694]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+052. mantiksalIsaretlemeOlustur  [satır 2697-2750]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+053. olaySiralamaOlustur  [satır 2753-2788]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+054. kelimeAvcisiBoslukOlustur  [satır 2791-2853]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+055. dogruMuYanlisMiOlustur  [satır 2856-2893]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+056. besNBirKOlustur  [satır 2896-2944]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+057. okuyalimYazalimOlustur  [satır 2947-2982]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+058. canliOnizlemeyiCiz  [satır 2994-3655]
+   Duplicate status : Hayır
+   Callers          : basligiGuncelle
+   Callees          : besNBirKOlustur, bulmacaOlustur, dogruMuYanlisMiOlustur, generateLiveRowSVG, harfKaristirmaOlustur, heceVeKelimeMotoru, isSatirCizgisi, kelimeAvcisiBoslukOlustur, kelimeAviOlustur, kelimeZinciriOlustur, kriptogramOlustur, labirentKelimeOlustur, mantiksalIsaretlemeOlustur, miniSudokuOlustur, okudugunuBoyamaOlustur, okudugunuCizmeOlustur, okudugunuEslestirmeOlustur, okuyalimYazalimOlustur, olaySiralamaOlustur, olusturBorderImage, rastgeleLabirentUret, serbestYaziOlustur
+   Global reads     : aktifBaslangicResmiTek, aktifGridMetinleri, aktifGridResimleri, mebHarfSirasiBuyuk, mebHarfSirasiKucuk
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : appendChild, createElement, getElementById, innerHTML
+   DOM targets      : 'canli-onizleme-kutusu', 'grid-col-input', 'grid-row-input', 'grid-yuvarlak-input', 'ilk-nesne-boyutu', 'kenar-stili-secimi', 'konu-ornek-resim', 'kutu-temasi-secimi', 'ornek-gorsel-alani'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : cizgiKutuphanesi, nesneSVGleri, spagettiYollar
+   Async/side APIs  : Yok
+
+059. listeyeEkle  [satır 3666-3779]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : arayuzuGuncelle, durumuKaydet, metinMotorunuGecisYap, rastgeleLabirentUret, rastgeleSayi
+   Global reads     : aktifArkaplanResmi, aktifBaslangicResmiTek, aktifBitisResmiTek, duzenlenenMetinIndex, genelSatirBoslugu, harfBaslangic, kagitIcerigi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById, innerHTML, querySelectorAll
+   DOM targets      : 'ders-secimi', 'gelismis-editor', 'grid-col-input', 'grid-row-input', 'grid-yuvarlak-input', 'input[name=', 'islem-turu', 'kenar-stili-secimi', 'konu-secimi', 'kutu-temasi-secimi', 'labirent-satir', 'labirent-sutun', 'max-sayi', 'min-sayi', 'sinif-secimi', 'soru-sayisi', 'soru-tipi-secimi', 'unite-secimi', 'zengin-metin-alani', 'zengin-renk-secimi', 'zengin-stil-secimi', 'zengin-tema-secimi'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : mufredat
+   Async/side APIs  : Yok
+
+060. yonergeDegistir  [satır 3781-3784]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 4001
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 4001
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+061. yonergeBoyutDegistir  [satır 3786-3790]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : 'yonerge-boyut-deger-${index}'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+062. genelOlcekDegistir  [satır 3791-3795]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3842
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : 'genel-olcek-deger-${index}'
+   Inline exposure  : VAR → satır 3842
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+063. genelKonumDegistir  [satır 3796-3800]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3857,3859,3860,3861
+   Callees          : kagidiCiz
+   Global reads     : kagitIcerigi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 3857; satır 3859; satır 3860; satır 3861
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+064. arayuzuGuncelle  [satır 3803-3807]
+   Duplicate status : Hayır
+   Callers          : bosKilavuzSatirEkle, geriAl, ileriAl, listeyeEkle, masterHedefSec, pAyarDegisti, soruyuCogalt, soruyuSil, suruklemeyiBirak
+   Callees          : kagidiCiz, listeyiCiz, satirBosluguMenusunuGuncelle
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+065. bulmacaZarla  [satır 3809-3812]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3993
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 3993
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+066. listeyiCiz  [satır 3820-4069]
+   Duplicate status : Hayır
+   Callers          : arayuzuGuncelle, labirentSekmeDegisti
+   Callees          : secimMenuHTML
+   Global reads     : kagitIcerigi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById, innerHTML
+   DOM targets      : 'soru-listesi-kutusu'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+067. fontunuDegistir  [satır 4072-4076]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : 'punto-deger-${index}'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+068. noktaAyarDegisti  [satır 4078-4096]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+069. dalgaFrekansiDegistir  [satır 4098-4102]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3925
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : 'frekans-deger-${index}'
+   Inline exposure  : VAR → satır 3925
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+070. dalgaYuksekligiDegistir  [satır 4104-4108]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3925
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : 'yukseklik-deger-${index}'
+   Inline exposure  : VAR → satır 3925
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+071. nesneBoyutunuDegistir  [satır 4110-4114]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : 'nesne-deger-${index}'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+072. nesneKonumDegistir  [satır 4116-4125]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : kagidiCiz
+   Global reads     : kagitIcerigi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+073. suruklemeyeBasla  [satır 4127-4131]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3832,4057
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : suruklenenSira
+   DOM APIs         : dataTransfer
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 3832; satır 4057
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : setTimeout
+
+074. suruklemeUstunde  [satır 4133-4133]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3832,4057
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : dataTransfer
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 3832; satır 4057
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+075. suruklemeyiBirak  [satır 4134-4140]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3832,4057
+   Callees          : arayuzuGuncelle, durumuKaydet
+   Global reads     : kagitIcerigi, suruklenenSira
+   Global writes    : suruklenenSira
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 3832; satır 4057
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+076. suruklemeBitti  [satır 4141-4141]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3832,4057
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 3832; satır 4057
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+077. soruyuSil  [satır 4142-4142]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3877,4065
+   Callees          : arayuzuGuncelle, durumuKaydet
+   Global reads     : kagitIcerigi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 3877; satır 4065
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+078. rastgeleSayi  [satır 4143-4143]
+   Duplicate status : Hayır
+   Callers          : listeyeEkle
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+079. kagidiCiz  [satır 4146-5337]
+   Duplicate status : Hayır
+   Callers          : aktifResimDegistir, arayuzuGuncelle, bulmacaZarla, dalgaFrekansiDegistir, dalgaYuksekligiDegistir, evrenselKontrolDegisti, fontunuDegistir, genelKonumDegistir, genelOlcekDegistir, gridAyarDegisti, harfSayisiDegistir, kapsayiciGenislikDegisti, kilavuzSatirSayisiDegistir, labirentBoyutDegisti, labirentKonumDegisti, nesneBoyutunuDegistir, nesneKonumDegistir, nesneSayisiDegistir, noktaAyarDegisti, renkDegisti, satirBosluguAyarla, sayfaSablonuDegisti, yonergeBoyutDegistir, yonergeDegistir, zenginMetinBoslukDegisti, zenginMetinEbatDegisti, zenginMetinSablonDegisti, TOP-LEVEL/anonymous callback @ satır 5375,5380
+   Callees          : akilliRotalariCiz, besNBirKOlustur, bulmacaOlustur, dogruMuYanlisMiOlustur, generateLiveRowSVG, harfKaristirmaOlustur, heceVeKelimeMotoru, isSatirCizgisi, kelimeAvcisiBoslukOlustur, kelimeAviOlustur, kelimeZinciriOlustur, kriptogramOlustur, labirentKelimeOlustur, mantiksalIsaretlemeOlustur, miniSudokuOlustur, okudugunuBoyamaOlustur, okudugunuCizmeOlustur, okudugunuEslestirmeOlustur, okuyalimYazalimOlustur, olaySiralamaOlustur, olusturBorderImage, serbestYaziOlustur
+   Global reads     : genelSatirBoslugu, kagitIcerigi, mebHarfSirasiBuyuk, mebHarfSirasiKucuk
+   Global writes    : kagitIcerigi
+   DOM APIs         : appendChild, createElement, getElementById, innerHTML
+   DOM targets      : 'calisma-kagidi', 'ders-secimi', 'genel-tasma-uyarisi', 'ilk-nesne-boyutu', 'orta-sutun-yazisi', 'ozel-baslik', 'sayfa-sutun-ayari', 'soru-alani', 'sutun-koruma-stili', 'yayinevi-metni', 'yazdir-konu'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : cizgiKutuphanesi, nesneSVGleri, spagettiYollar
+   Async/side APIs  : setTimeout
+
+080. nesneSayisiDegistir  [satır 5339-5343]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3928
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : 'sayi-deger-${index}'
+   Inline exposure  : VAR → satır 3928
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+081. kapsayiciGenislikDegisti  [satır 5345-5348]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+082. tahtayiTemizle  [satır 5386-5392]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : anlikCizimYolu
+   DOM APIs         : getContext, getElementById
+   DOM targets      : 'cizim-tahtasi'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+083. rastgeleLabirentUret  [satır 5395-5450]
+   Duplicate status : Hayır
+   Callers          : canliOnizlemeyiCiz, listeyeEkle
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+084. soruyuCogalt  [satır 5454-5461]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 4064
+   Callees          : arayuzuGuncelle, durumuKaydet
+   Global reads     : kagitIcerigi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 4064
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+085. labirentSekmeDegisti  [satır 5464-5467]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : listeyiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+086. labirentBoyutDegisti  [satır 5469-5492]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : kagidiCiz
+   Global reads     : kagitIcerigi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : 'labirent-deger-${index}'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+087. labirentKonumDegisti  [satır 5494-5522]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : kagidiCiz
+   Global reads     : kagitIcerigi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+088. satirBosluguMenusunuGuncelle  [satır 5525-5541]
+   Duplicate status : Hayır
+   Callers          : arayuzuGuncelle
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : kagitIcerigi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : getElementById, innerHTML
+   DOM targets      : 'satir-boslugu-hedef'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+089. satirBosluguHedefDegisti  [satır 5543-5555]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : genelSatirBoslugu, kagitIcerigi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : getElementById
+   DOM targets      : 'satir-boslugu', 'satir-boslugu-hedef'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+090. satirBosluguAyarla  [satır 5557-5580]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : kagidiCiz
+   Global reads     : kagitIcerigi
+   Global writes    : genelSatirBoslugu, kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : 'satir-boslugu-hedef'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+091. metinMotorunuGecisYap  [satır 5587-5628]
+   Duplicate status : Hayır
+   Callers          : listeyeEkle, metniDuzenle
+   Callees          : konuDegisti
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : duzenlenenMetinIndex
+   DOM APIs         : getElementById, innerHTML
+   DOM targets      : 'gelismis-editor', 'gelismis-metin-motoru-kapsayici', 'metin-ekle-btn', 'metin-motoru-btn', 'zengin-metin-alani', 'zengin-stil-secimi', 'zengin-tema-secimi'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+092. metinFormatla  [satır 5631-5634]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : getElementById
+   DOM targets      : 'gelismis-editor'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+093. zenginMetinBoslukDegisti  [satır 5636-5639]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3838
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 3838
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+094. zenginMetinSablonDegisti  [satır 5641-5644]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3867
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : VAR → satır 3867
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+095. metniDuzenle  [satır 5650-5678]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3876
+   Callees          : metinMotorunuGecisYap
+   Global reads     : kagitIcerigi
+   Global writes    : duzenlenenMetinIndex
+   DOM APIs         : getElementById, innerHTML
+   DOM targets      : 'gelismis-editor', 'metin-ekle-btn', 'zengin-metin-alani', 'zengin-renk-secimi', 'zengin-stil-secimi', 'zengin-tema-secimi'
+   Inline exposure  : VAR → satır 3876
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+096. zenginMetinEbatDegisti  [satır 5679-5690]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3847,3851
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : 'zengin-ebat-${eksen}-${index}'
+   Inline exposure  : VAR → satır 3847; satır 3851
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+097. sayfaSablonuDegisti  [satır 5693-5705]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : getElementById
+   DOM targets      : 'sayfa-sutun-ayari', 'yayinevi-kutusu'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+098. harfSayisiDegistir  [satır 5707-5711]
+   Duplicate status : Hayır
+   Callers          : HTML inline/template @ satır 3922
+   Callees          : kagidiCiz
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : kagitIcerigi
+   DOM APIs         : getElementById
+   DOM targets      : 'harfsayisi-deger-${index}'
+   Inline exposure  : VAR → satır 3922
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+099. bosKilavuzSatirEkle  [satır 5716-5743]
+   Duplicate status : Hayır
+   Callers          : Statik named caller bulunamadı
+   Callees          : arayuzuGuncelle, durumuKaydet
+   Global reads     : genelSatirBoslugu, kagitIcerigi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : getElementById
+   DOM targets      : 'ders-secimi', 'sinif-secimi', 'unite-secimi'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : Yok
+
+100. akilliRotalariCiz  [satır 5748-5860]
+   Duplicate status : Hayır
+   Callers          : kagidiCiz
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : Yok / tespit edilmedi
+   Global writes    : Yok / tespit edilmedi
+   DOM APIs         : getBBox, innerHTML, querySelector, querySelectorAll
+   DOM targets      : '.akilli-rota-kapsayici', '.rota-cizim-katmani', '.rota-hedef-metin'
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : harfRotalari
+   Async/side APIs  : Yok
+
+101. yazdir  [satır 5865-5873]
+   Duplicate status : Hayır
+   Callers          : TOP-LEVEL/anonymous callback @ satır 5886
+   Callees          : Yok / statik named callee bulunamadı
+   Global reads     : kagitIcerigi
+   Global writes    : kagitIcerigi
+   DOM APIs         : Yok
+   DOM targets      : Yok / literal hedef bulunamadı
+   Inline exposure  : script.js içinde doğrudan bulunamadı
+   External refs    : Önemli harici sembol tespit edilmedi
+   Async/side APIs  : window.print
+
+====================================================================================================
+D. EXTERNAL / OTHER-FILE DEPENDENCY ADAYLARI
+====================================================================================================
+- BulmacaMotoru: bulmacaOlustur
+- HarfKaristirmaMotoru: harfKaristirmaOlustur
+- KelimeAviMotoru: kelimeAviOlustur
+- KelimeZinciriMotoru: kelimeZinciriOlustur
+- KriptogramMotoru: kriptogramOlustur
+- LabirentKelimeMotoru: labirentKelimeOlustur
+- MiniSudokuMotoru: miniSudokuOlustur
+- cizgiKutuphanesi: canliOnizlemeyiCiz, generateLiveRowSVG, kagidiCiz
+- dersIsimleri: sinifDegisti
+- evrenselZitliklar: soruTipiDegisti, varyasyonKontrol
+- harfRotalari: akilliRotalariCiz
+- harfSoruTipleri: konuDegisti, soruTipiDegisti
+- heceSoruTipleri: konuDegisti
+- mufredat: basligiGuncelle, dersDegisti, konuDegisti, listeyeEkle, sinifDegisti, uniteDegisti
+- nesneSVGleri: canliOnizlemeyiCiz, kagidiCiz
+- spagettiYollar: canliOnizlemeyiCiz, kagidiCiz
+- svgKutuphanesi: bulmacaOlustur, harfKaristirmaOlustur, kriptogramOlustur, kutuphanedeAra, miniSudokuOlustur, seciliGorseliKullan, sifreGorseliVer, vitrineAl
+
+====================================================================================================
+E. DOĞRULAMA BLOĞU
+====================================================================================================
+FUNCTION COUNT CHECK
+Expected function definitions: 101
+Found: 101
+Missing: 0
+Extra: 0
+Unique names: 100
+Duplicate: turkceTemizle → 2 definitions
+
+PER-FUNCTION FIELD COMPLETENESS
+[✓] 101/101 callers alanı raporlandı ("bulunamadı/yok" sonuçları dahil)
+[✓] 101/101 callees alanı raporlandı ("bulunamadı/yok" sonuçları dahil)
+[✓] 101/101 global reads alanı raporlandı ("bulunamadı/yok" sonuçları dahil)
+[✓] 101/101 global writes alanı raporlandı ("bulunamadı/yok" sonuçları dahil)
+[✓] 101/101 DOM dependencies alanı raporlandı ("bulunamadı/yok" sonuçları dahil)
+[✓] 101/101 inline event exposure alanı raporlandı ("bulunamadı/yok" sonuçları dahil)
+[✓] 101/101 external refs alanı raporlandı ("bulunamadı/yok" sonuçları dahil)
+[✓] 101/101 async/side APIs alanı raporlandı ("bulunamadı/yok" sonuçları dahil)
+
+FORENSIC GATE
+[✓] Sayısal altın standart sağlandı: 101 tanım / 100 benzersiz / turkceTemizle x2.
+[!] HTML inline caller doğrulaması TAM DEĞİL: ayrı HTML dosyası bu çalışmaya dahil edilmedi.
+[!] Diğer JS dosyalarındaki caller/definition doğrulaması TAM DEĞİL: bu çalışma script(5).js merkezlidir.
+[!] Bu nedenle bu dosya "SCRIPT.JS FORENSIC V1" olarak güvenlidir; tüm-proje bağımlılık haritası için HTML + diğer JS çapraz taraması gerekir.
