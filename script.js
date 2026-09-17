@@ -1492,171 +1492,127 @@
 
                 
 
-                // --- 3. MENÜ YÖNETİMİ ---
-                function sinifDegisti() {
-                    const sinifSecimi = document.getElementById('sinif-secimi').value;
-                    const dersSelect = document.getElementById('ders-secimi');
-                    dersSelect.innerHTML = ''; 
-                    const mevcutDersler = Object.keys(mufredat[sinifSecimi] || {});
-                    mevcutDersler.forEach(dersKodu => {
-                        const option = document.createElement('option');
-                        option.value = dersKodu;
-                        option.innerText = dersIsimleri[dersKodu];
-                        dersSelect.appendChild(option);
-                    });
-                    dersDegisti(); 
-                }
+                
+                
 
-                function dersDegisti() {
-                    const sinifSecimi = document.getElementById('sinif-secimi').value;
-                    const dersSecimi = document.getElementById('ders-secimi').value;
-                    const uniteSelect = document.getElementById('unite-secimi');
-                    
-                    if(document.getElementById('yazdir-sinif')) document.getElementById('yazdir-sinif').innerText = sinifSecimi;
-                    
-                    uniteSelect.innerHTML = '';
-                    const uniteler = Object.keys(mufredat[sinifSecimi][dersSecimi] || {});
-                    uniteler.forEach(unite => {
-                        const option = document.createElement('option');
-                        option.value = unite;
-                        option.innerText = unite;
-                        uniteSelect.appendChild(option);
-                    });
-                    uniteDegisti();
-                }
+                
 
-                function uniteDegisti() {
-                    const sinifSecimi = document.getElementById('sinif-secimi').value;
-                    const dersSecimi = document.getElementById('ders-secimi').value;
-                    const uniteSecimi = document.getElementById('unite-secimi').value;
-                    const konuSelect = document.getElementById('konu-secimi');
-
-                    konuSelect.innerHTML = '';
-                    const konular = Object.keys(mufredat[sinifSecimi][dersSecimi][uniteSecimi] || {});
-                    
-                    konular.forEach(konu => {
-                        const option = document.createElement('option');
-                        option.value = konu;
-                        option.innerText = konu;
-                        konuSelect.appendChild(option);
-                    });
-                    konuDegisti();
-                }
+                
 
                 function konuDegisti() {
-        const sinifSecimi = document.getElementById('sinif-secimi').value;
-        const dersSecimi = document.getElementById('ders-secimi').value;
-        const uniteSecimi = document.getElementById('unite-secimi').value;
-        const konuSecimi = document.getElementById('konu-secimi').value;
-        
-        const tooltipText = document.getElementById('konu-tooltip');
-        const ornekGorselAlani = document.getElementById('ornek-gorsel-alani');
-        const ornekResim = document.getElementById('konu-ornek-resim');
-        const ozellikKutulari = document.getElementById('ozellik-kutulari');
-        
-        const soruTipiLabel = document.getElementById('soru-tipi-label');
-        const soruTipiSecimi = document.getElementById('soru-tipi-secimi');
-        // soruTipi hataya sebep olmasın diye güvene alındı
-        let soruTipi = soruTipiSecimi ? soruTipiSecimi.value : ""; 
-
-        const zorlukAlani = document.getElementById('zorluk-alani');
-        if (zorlukAlani) zorlukAlani.style.display = "none"; // Kalıcı olarak gizlendi
-
-        const labirentAlani = document.getElementById('labirent-ayarlari');
-        if (labirentAlani) labirentAlani.style.display = (konuSecimi === "Labirent Çalışmaları") ? "block" : "none";
-
-        if (mufredat[sinifSecimi] && mufredat[sinifSecimi][dersSecimi] && mufredat[sinifSecimi][dersSecimi][uniteSecimi] && mufredat[sinifSecimi][dersSecimi][uniteSecimi][konuSecimi]) {
-            let secilenKonuVerisi = mufredat[sinifSecimi][dersSecimi][uniteSecimi][konuSecimi];
-            if (tooltipText) tooltipText.innerText = secilenKonuVerisi.bilgi || "Bilgi yok.";
-            if (ornekResim) ornekResim.src = "ornek-yok.png";
-            if (ornekGorselAlani) ornekGorselAlani.style.display = "block";
-        } else {
-            if(ornekGorselAlani) ornekGorselAlani.style.display = "none";
-        }
-
-        ozellikKutulari.innerHTML = '';
-
-        if (konuSecimi.includes("Harfi")) {
-            if(soruTipiLabel) soruTipiLabel.style.display = "block";
-            if(soruTipiSecimi) {
-                soruTipiSecimi.style.display = "block";
-                soruTipiSecimi.innerHTML = '<option value="">-- Soru Tipi Seçin --</option>';
-                Object.keys(harfSoruTipleri).forEach(tip => {
-                    soruTipiSecimi.innerHTML += `<option value="${tip}">${tip}</option>`;
-                });
-            }
-            if(document.getElementById('ozellikler-alani')) document.getElementById('ozellikler-alani').style.display = 'none';
-        } 
-        // YENİ: Veriyi data.js'den okuyan dinamik motor!
-        else if (typeof heceSoruTipleri !== 'undefined' && heceSoruTipleri[konuSecimi]) {
-            if(soruTipiLabel) soruTipiLabel.style.display = "block";
-            if(soruTipiSecimi) {
-                soruTipiSecimi.style.display = "block";
-                soruTipiSecimi.innerHTML = '<option value="">-- Soru Tipi Seçin --</option>';
-                heceSoruTipleri[konuSecimi].forEach(tip => {
-                    soruTipiSecimi.innerHTML += `<option value="${tip}">${tip}</option>`;
-                });
-            }
-            if(document.getElementById('ozellikler-alani')) document.getElementById('ozellikler-alani').style.display = 'none';
-        }
-        else {
-            if(soruTipiLabel) soruTipiLabel.style.display = "none";
-            if(soruTipiSecimi) soruTipiSecimi.style.display = "none";
-            
-            const matAyarlari = document.getElementById('matematik-ayarlari');
-            if (dersSecimi === 'matematik') {
-                if(matAyarlari) matAyarlari.style.display = 'block';
-                if(document.getElementById('ozellikler-alani')) document.getElementById('ozellikler-alani').style.display = 'none';
-            } else {
-                if(matAyarlari) matAyarlari.style.display = 'none';
-                const secilenKonu = mufredat[sinifSecimi][dersSecimi][uniteSecimi][konuSecimi];
-                const ozellikler = secilenKonu ? secilenKonu.ozellikler : [];
+                const sinifSecimi = document.getElementById('sinif-secimi').value;
+                const dersSecimi = document.getElementById('ders-secimi').value;
+                const uniteSecimi = document.getElementById('unite-secimi').value;
+                const konuSecimi = document.getElementById('konu-secimi').value;
                 
-                if (ozellikler && ozellikler.length > 0) {
-                    if(document.getElementById('ozellikler-alani')) document.getElementById('ozellikler-alani').style.display = 'block';
-                    
-                    if (konuSecimi === "Karmaşık Yol/Eşleştirme Çalışmaları (Spagetti Labirent)") {
-                        let selectHtml = `
-                            <label style="font-size: 11px; font-weight: bold; color: #2c3e50; display: block; margin-bottom: 5px;">🧬 Yol Sayısı Seçimi:</label>
-                            <select id="spagetti-dropdown-secimi" name="ozellik" onchange="basligiGuncelle(); nesneYuklemeAlaniniGuncelle();" style="width: 100%; font-size: 11px; padding: 5px; border: 1px solid #b2bec3; border-radius: 4px; color: #2c3e50; font-weight: bold; background:#fff; cursor:pointer;">`;
-                        ozellikler.forEach(ozellik => {
-                            selectHtml += `<option value="${ozellik}">${ozellik}</option>`;
-                        });
-                        selectHtml += `</select>`;
-                        ozellikKutulari.innerHTML = selectHtml;
-                    } 
-                    else {
-                        ozellikler.forEach(ozellik => {
-                            if (ozellik === "Normal Çizgi" || ozellik === "Dikey" || ozellik === "Sağa Bakan (>)" || ozellik === "Büyük Boyut" || ozellik === "O Şekli" || ozellik === "Büyük U" || ozellik === "Normal Dalga" || ozellik === "Ters Dalga" || ozellik === "Küçük Tepe") {
-                                const ayirici = document.createElement('div'); 
-                                ayirici.style.width = "100%";
-                                ayirici.style.borderTop = "1px dashed #b2bec3";
-                                ayirici.style.margin = "10px 0 10px 0";
-                                ozellikKutulari.appendChild(ayirici);
-                            }
+                const tooltipText = document.getElementById('konu-tooltip');
+                const ornekGorselAlani = document.getElementById('ornek-gorsel-alani');
+                const ornekResim = document.getElementById('konu-ornek-resim');
+                const ozellikKutulari = document.getElementById('ozellik-kutulari');
+                
+                const soruTipiLabel = document.getElementById('soru-tipi-label');
+                const soruTipiSecimi = document.getElementById('soru-tipi-secimi');
+                // soruTipi hataya sebep olmasın diye güvene alındı
+                let soruTipi = soruTipiSecimi ? soruTipiSecimi.value : ""; 
 
-                            const div = document.createElement('div');
-                            div.style.display = "flex"; div.style.alignItems = "center"; div.style.marginBottom = "6px";
-                            div.innerHTML = `<input type="checkbox" name="ozellik" value="${ozellik}" onchange="varyasyonKontrol(this); basligiGuncelle(); nesneYuklemeAlaniniGuncelle();" style="width: 16px; height: 16px; margin: 0 8px 0 0; cursor: pointer;"> <span style="font-size:12px;">${ozellik}</span>`;
-                            ozellikKutulari.appendChild(div);
+                const zorlukAlani = document.getElementById('zorluk-alani');
+                if (zorlukAlani) zorlukAlani.style.display = "none"; // Kalıcı olarak gizlendi
+
+                const labirentAlani = document.getElementById('labirent-ayarlari');
+                if (labirentAlani) labirentAlani.style.display = (konuSecimi === "Labirent Çalışmaları") ? "block" : "none";
+
+                if (mufredat[sinifSecimi] && mufredat[sinifSecimi][dersSecimi] && mufredat[sinifSecimi][dersSecimi][uniteSecimi] && mufredat[sinifSecimi][dersSecimi][uniteSecimi][konuSecimi]) {
+                    let secilenKonuVerisi = mufredat[sinifSecimi][dersSecimi][uniteSecimi][konuSecimi];
+                    if (tooltipText) tooltipText.innerText = secilenKonuVerisi.bilgi || "Bilgi yok.";
+                    if (ornekResim) ornekResim.src = "ornek-yok.png";
+                    if (ornekGorselAlani) ornekGorselAlani.style.display = "block";
+                } else {
+                    if(ornekGorselAlani) ornekGorselAlani.style.display = "none";
+                }
+
+                ozellikKutulari.innerHTML = '';
+
+                if (konuSecimi.includes("Harfi")) {
+                    if(soruTipiLabel) soruTipiLabel.style.display = "block";
+                    if(soruTipiSecimi) {
+                        soruTipiSecimi.style.display = "block";
+                        soruTipiSecimi.innerHTML = '<option value="">-- Soru Tipi Seçin --</option>';
+                        Object.keys(harfSoruTipleri).forEach(tip => {
+                            soruTipiSecimi.innerHTML += `<option value="${tip}">${tip}</option>`;
                         });
                     }
-                } else {
+                    if(document.getElementById('ozellikler-alani')) document.getElementById('ozellikler-alani').style.display = 'none';
+                } 
+                // YENİ: Veriyi data.js'den okuyan dinamik motor!
+                else if (typeof heceSoruTipleri !== 'undefined' && heceSoruTipleri[konuSecimi]) {
+                    if(soruTipiLabel) soruTipiLabel.style.display = "block";
+                    if(soruTipiSecimi) {
+                        soruTipiSecimi.style.display = "block";
+                        soruTipiSecimi.innerHTML = '<option value="">-- Soru Tipi Seçin --</option>';
+                        heceSoruTipleri[konuSecimi].forEach(tip => {
+                            soruTipiSecimi.innerHTML += `<option value="${tip}">${tip}</option>`;
+                        });
+                    }
                     if(document.getElementById('ozellikler-alani')) document.getElementById('ozellikler-alani').style.display = 'none';
                 }
-            }
-        }
-        
-        // YENİ: Boş Kılavuz Satır butonunu sadece İlkokuma dersindeyken göster
-        // Burada "const nesneYuklemeAlani" KODU SİLİNDİ, hata yaratan kısım buydu!
-        const bosSatirBtn = document.getElementById('bos-satir-ekle-btn');
-        if (bosSatirBtn) {
-            bosSatirBtn.style.display = (dersSecimi === "ilkokuma") ? "block" : "none";
-        }
+                else {
+                    if(soruTipiLabel) soruTipiLabel.style.display = "none";
+                    if(soruTipiSecimi) soruTipiSecimi.style.display = "none";
+                    
+                    const matAyarlari = document.getElementById('matematik-ayarlari');
+                    if (dersSecimi === 'matematik') {
+                        if(matAyarlari) matAyarlari.style.display = 'block';
+                        if(document.getElementById('ozellikler-alani')) document.getElementById('ozellikler-alani').style.display = 'none';
+                    } else {
+                        if(matAyarlari) matAyarlari.style.display = 'none';
+                        const secilenKonu = mufredat[sinifSecimi][dersSecimi][uniteSecimi][konuSecimi];
+                        const ozellikler = secilenKonu ? secilenKonu.ozellikler : [];
+                        
+                        if (ozellikler && ozellikler.length > 0) {
+                            if(document.getElementById('ozellikler-alani')) document.getElementById('ozellikler-alani').style.display = 'block';
+                            
+                            if (konuSecimi === "Karmaşık Yol/Eşleştirme Çalışmaları (Spagetti Labirent)") {
+                                let selectHtml = `
+                                    <label style="font-size: 11px; font-weight: bold; color: #2c3e50; display: block; margin-bottom: 5px;">🧬 Yol Sayısı Seçimi:</label>
+                                    <select id="spagetti-dropdown-secimi" name="ozellik" onchange="basligiGuncelle(); nesneYuklemeAlaniniGuncelle();" style="width: 100%; font-size: 11px; padding: 5px; border: 1px solid #b2bec3; border-radius: 4px; color: #2c3e50; font-weight: bold; background:#fff; cursor:pointer;">`;
+                                ozellikler.forEach(ozellik => {
+                                    selectHtml += `<option value="${ozellik}">${ozellik}</option>`;
+                                });
+                                selectHtml += `</select>`;
+                                ozellikKutulari.innerHTML = selectHtml;
+                            } 
+                            else {
+                                ozellikler.forEach(ozellik => {
+                                    if (ozellik === "Normal Çizgi" || ozellik === "Dikey" || ozellik === "Sağa Bakan (>)" || ozellik === "Büyük Boyut" || ozellik === "O Şekli" || ozellik === "Büyük U" || ozellik === "Normal Dalga" || ozellik === "Ters Dalga" || ozellik === "Küçük Tepe") {
+                                        const ayirici = document.createElement('div'); 
+                                        ayirici.style.width = "100%";
+                                        ayirici.style.borderTop = "1px dashed #b2bec3";
+                                        ayirici.style.margin = "10px 0 10px 0";
+                                        ozellikKutulari.appendChild(ayirici);
+                                    }
 
-        basligiGuncelle();
-        nesneYuklemeAlaniniGuncelle(); 
-    } // <--- İŞTE SİSTEMİ ÇÖKERTEN EKSİK PARANTEZ BURAYA GELDİ!
+                                    const div = document.createElement('div');
+                                    div.style.display = "flex"; div.style.alignItems = "center"; div.style.marginBottom = "6px";
+                                    div.innerHTML = `<input type="checkbox" name="ozellik" value="${ozellik}" onchange="varyasyonKontrol(this); basligiGuncelle(); nesneYuklemeAlaniniGuncelle();" style="width: 16px; height: 16px; margin: 0 8px 0 0; cursor: pointer;"> <span style="font-size:12px;">${ozellik}</span>`;
+                                    ozellikKutulari.appendChild(div);
+                                });
+                            }
+                        } else {
+                            if(document.getElementById('ozellikler-alani')) document.getElementById('ozellikler-alani').style.display = 'none';
+                        }
+                    }
+                }
+                
+                // YENİ: Boş Kılavuz Satır butonunu sadece İlkokuma dersindeyken göster
+                // Burada "const nesneYuklemeAlani" KODU SİLİNDİ, hata yaratan kısım buydu!
+                const bosSatirBtn = document.getElementById('bos-satir-ekle-btn');
+                if (bosSatirBtn) {
+                    bosSatirBtn.style.display = (dersSecimi === "ilkokuma") ? "block" : "none";
+                }
+
+                basligiGuncelle();
+                nesneYuklemeAlaniniGuncelle(); 
+                }
 
                 function soruTipiDegisti() {
                     const soruTipi = document.getElementById('soru-tipi-secimi').value;

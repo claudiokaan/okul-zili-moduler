@@ -1,4 +1,4 @@
-# OKUL ZİLİ V3 — MIGRATION RUNBOOK V1.1
+# OKUL ZİLİ V3 — MIGRATION RUNBOOK V1.2
 ## Uygulama Footpath Sürümü
 
 **Kaynak:** Modüler Mimari Anayasası V1.1  
@@ -276,6 +276,19 @@ Sıra: Çengel, Kelime Avı, Kriptogram, Harf Karıştırma, Labirent Kelime, Ke
 
 # FOOTPATH R — MATEMATİK: MİMARİ SINAV
 
+## R0.1 — MEVCUT MATEMATİK LEGACY TASLAĞI NOTU
+
+Matematik fazına gelindiğinde mevcut legacy `dersSecimi === "matematik"` ve `islemTuru/sayi1/sayi2` bağlantıları önceden "temizlenmiş" kabul edilmeyecektir.
+
+Bu kod:
+- önce mevcut davranış olarak envanterlenir,
+- yeni matematik modülü Core'a yeni özel bilgi eklemeden aynı davranışı üretiyorsa migrate edilir,
+- migration sırasında fırsatçı cleanup yapılmaz.
+
+Bu not, Matematik mimari testine girmeden önce zorunlu checkpoint'tir.
+
+---
+
 İlk yeni matematik tipi eklenirken Core/orchestration/list-manager ve legacy özel branch'lerin değişmesi gerekmemeli.
 Gerekiyorsa DUR: mimari sınır yanlış.
 
@@ -331,4 +344,12 @@ Bir soru tipi tamamen migrate olmadan ikincisine başlama.
 Core'a soru-tipine özel bilgi sızıyorsa DUR.  
 V2 davranışı değişiyorsa DUR.
 
-**OKUL ZİLİ V3 — MIGRATION RUNBOOK V1.1 / FOOTPATH**
+**OKUL ZİLİ V3 — MIGRATION RUNBOOK V1.2 / FOOTPATH**
+
+
+# V1.2 DEĞİŞİKLİK KAYDI
+
+1. Pilot Harf Yazımı için `renderPreview` / `renderA4` golden testini mümkün kılan geçici ince Registry yönlendirme kuralı eklendi.
+2. Bu yönlendirmenin davranış mantığı içermeyeceği ve genel dispatcher'ın Footpath M / Anayasa Faz 7–8'de kurulacağı netleştirildi.
+3. Mevcut Matematik legacy taslağı (`dersSecimi === "matematik"`, `islemTuru/sayi1/sayi2`) için Faz R öncesi checkpoint notu eklendi.
+4. Anayasa V1.1 ile bilinen sıra gerilimi giderildi.
