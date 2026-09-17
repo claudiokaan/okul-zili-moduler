@@ -11,14 +11,7 @@
     let aktifGridResimleri = {}; 
     let aktifGridMetinleri = {}; // YENİ: Yazı hafızası!
 
-    // ==============================================================
-    // YENİ: TÜRKÇE ÜTÜLEYİCİ VE CANVA VİTRİN MOTORU
-    // ==============================================================
-    function turkceTemizle(metin) {
-        if(!metin) return "";
-        let harfler = { "ç":"c", "ğ":"g", "ı":"i", "i":"i", "ö":"o", "ş":"s", "ü":"u", "Ç":"C", "Ğ":"G", "İ":"I", "Ö":"O", "Ş":"S", "Ü":"U" };
-        return metin.replace(/[çğıiöşüÇĞİÖŞÜ]/g, m => harfler[m]).toLowerCase().trim();
-    }
+    
 
     let kutuphaneHedefIndex = null;
     let kutuphaneHedefTur = null; 
@@ -294,12 +287,7 @@
     }
 
 
-    // --- 0.1. TÜRKÇE KARAKTER ÜTÜLEYİCİ (ARAMA MOTORU İÇİN) ---
-    function turkceTemizle(metin) {
-        if(!metin) return "";
-        let harfler = { "ç":"c", "ğ":"g", "ı":"i", "i":"i", "ö":"o", "ş":"s", "ü":"u", "Ç":"C", "Ğ":"G", "İ":"I", "Ö":"O", "Ş":"S", "Ü":"U" };
-        return metin.replace(/[çğıiöşüÇĞİÖŞÜ]/g, m => harfler[m]).toLowerCase().trim();
-    }
+    
 
 
                 // --- ANA HAFIZA VE KISAYOLLAR BURADA ---
