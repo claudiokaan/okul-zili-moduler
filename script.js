@@ -291,7 +291,7 @@
 
 
                 // --- ANA HAFIZA VE KISAYOLLAR BURADA ---
-                let kagitIcerigi = [];
+             
                 let genelSatirBoslugu = 15; // Kağıdın ilk açılıştaki standart alt boşluğu
 
                 // MEB 2024 Yeni Müfredat Harf Grupları (ANETİL...)
@@ -1325,9 +1325,7 @@
                     kagidiCiz(); 
                 }
 
-                // --- 0.5 HAFIZA (UNDO/REDO) MOTORU ---
-                let kagitGecmisi = [];
-                let kagitGelecegi = [];
+                
 
 
                 
@@ -1490,26 +1488,9 @@
                     arayuzuGuncelle();
                 }
 
-                function durumuKaydet() {
-                    kagitGecmisi.push(JSON.parse(JSON.stringify(kagitIcerigi)));
-                    kagitGelecegi = []; 
-                }
+                
 
-                function geriAl() {
-                    if (kagitGecmisi.length > 0) {
-                        kagitGelecegi.push(JSON.parse(JSON.stringify(kagitIcerigi)));
-                        kagitIcerigi = kagitGecmisi.pop();
-                        arayuzuGuncelle();
-                    }
-                }
-
-                function ileriAl() {
-                    if (kagitGelecegi.length > 0) {
-                        kagitGecmisi.push(JSON.parse(JSON.stringify(kagitIcerigi)));
-                        kagitIcerigi = kagitGelecegi.pop();
-                        arayuzuGuncelle();
-                    }
-                }
+                
 
                 // --- 3. MENÜ YÖNETİMİ ---
                 function sinifDegisti() {

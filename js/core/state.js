@@ -2,32 +2,52 @@
 // Belge durumu ve eski/yeni model uyumluluk (legacy resolver) metodlarını içerir.
 
 (function(global) {
+    // --- D3.1: LEGACY DOCUMENT ITEM KIND RESOLVER ---
     const OkulZiliDocument = {
-        
-        // Verilen item objesinin 'content' mi yoksa 'question' mu olduğunu güvenle çözer.
         getItemKind: function(item) {
-            // 1. Geçersiz input kontrolü (Sistemi çökertmez, güvenli fallback döner)
             if (!item || typeof item !== 'object') {
                 return "unknown"; 
             }
-            
-            // 2. Yeni nesil V3 item kontrolü (Zaten kind atanmışsa direkt dön)
             if (item.kind) {
                 return item.kind;
             }
-            
-            // 3. Eski nesil V2 legacy Zengin Metin kontrolü
             if (item.tip === "zengin-metin") {
                 return "content";
             }
-            
-            // 4. Diğer tüm eski V2 legacy objeler varsayılan olarak sorudur
             return "question";
         }
+    };
+    global.OkulZiliDocument = OkulZiliDocument;
 
+    // --- F5.2: DOCUMENT STATE & HISTORY ---
+    // Legacy uyumluluk için değişkenleri doğrudan global nesneye (window) bağlıyoruz.
+    global.kagitIcerigi = [];
+    global.kagitGecmisi = [];
+    global.kagitGelecegi = [];
+
+    global.durumuKaydet = function() {
+        global.kagitGecmisi.push(JSON.parse(JSON.stringify(global.kagitIcerigi)));
+        global.kagitGelecegi = [];
     };
 
-    // Global erişime (window) kontrollü olarak aç
-    global.OkulZiliDocument = OkulZiliDocument;
+    global.geriAl = function() {
+        if (global.kagitGecmisi.length > 0) {
+            global.kagitGelecegi.push(JSON.parse(JSON.stringify(global.kagitIcerigi)));
+            global.kagitIcerigi = global.kagitGecmisi.pop();
+            if (typeof global.arayuzuGuncelle === 'function') {
+                global.arayuzuGuncelle();
+            }
+        }
+    };
+
+    global.ileriAl = function() {
+        if (global.kagitGelecegi.length > 0) {
+            global.kagitGecmisi.push(JSON.parse(JSON.stringify(global.kagitIcerigi)));
+            global.kagitIcerigi = global.kagitGelecegi.pop();
+            if (typeof global.arayuzuGuncelle === 'function') {
+                global.arayuzuGuncelle();
+            }
+        }
+    };
 
 })(typeof window !== 'undefined' ? window : this);
