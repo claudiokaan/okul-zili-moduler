@@ -1,2 +1,15 @@
-﻿// Okul Zili V3 - Ilkokuma Module Index
-// Implementation will be added in a later migration step.
+﻿// Okul Zili V3 - İlk Okuma Yazma Soru Tipleri Kaydı
+
+(function(registry) {
+    if (!registry) {
+        console.error("Registry bulunamadi, ilkokuma modulu yuklenemedi.");
+        return;
+    }
+
+    // 1. Harf Yazımı (Sadece Metadata)
+    registry.register({
+        id: "ilkokuma.harf_yazimi",
+        name: "Harf Yazımı"
+    });
+
+})(typeof window !== 'undefined' && window.OkulZiliRegistry ? window.OkulZiliRegistry : null);
