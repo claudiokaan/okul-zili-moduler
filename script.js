@@ -3481,11 +3481,19 @@
                                 gRows = document.getElementById('grid-row-input') ? parseInt(document.getElementById('grid-row-input').value) : 4;
                                 gYuv = document.getElementById('grid-yuvarlak-input') ? parseInt(document.getElementById('grid-yuvarlak-input').value) : 1;
                             }
-                        }
+                    }
 
-                        let madde = {
-                            kind: "question", id: Date.now() + Math.random(), sinif: sinifSecimi, ders: dersSecimi, unite: uniteSecimi, konu: konuSecimi, kisaKonu: kisaIsim, soruTipi: secilenSoruTipi, fontBoyutu: (["Parmakla Takip Etme", "Dış Hat Boyama"].includes(secilenSoruTipi) ? 250 : 80), mufredatSirasi: mufredatSirasi, tip: dersSecimi === 'matematik' ? "matematik" : "ilkokuma",
-                            baslangicResmi: typeof aktifBaslangicResmiTek !== 'undefined' ? aktifBaslangicResmiTek : "", bitisResmi: typeof aktifBitisResmiTek !== 'undefined' ? aktifBitisResmiTek : "", arkaplanResmi: typeof aktifArkaplanResmi !== 'undefined' ? aktifArkaplanResmi : "",
+                    // --- YENİ V3 REGISTRY KÖPRÜSÜ (LEGACY BRIDGE) ---
+                    let fBoyutDefault = (["Parmakla Takip Etme", "Dış Hat Boyama"].includes(secilenSoruTipi) ? 250 : 80);
+                    if (secilenSoruTipi === "Harf Yazımı") {
+                        const registryKaydi = window.OkulZiliRegistry.get("ilkokuma.harf_yazimi");
+                        fBoyutDefault = registryKaydi.createDefault().fontBoyutu;
+                    }
+                    // ------------------------------------------------
+
+                    let madde = {
+                        kind: "question", id: Date.now() + Math.random(), sinif: sinifSecimi, ders: dersSecimi, unite: uniteSecimi, konu: konuSecimi, kisaKonu: kisaIsim, soruTipi: secilenSoruTipi, fontBoyutu: fBoyutDefault, mufredatSirasi: mufredatSirasi, tip: dersSecimi === 'matematik' ? "matematik" : "ilkokuma",
+                        baslangicResmi: typeof aktifBaslangicResmiTek !== 'undefined' ? aktifBaslangicResmiTek : "", bitisResmi: typeof aktifBitisResmiTek !== 'undefined' ? aktifBitisResmiTek : "", arkaplanResmi: typeof aktifArkaplanResmi !== 'undefined' ? aktifArkaplanResmi : "",
                             baslangicResimleri: [...aktifBaslangicResimleri], bitisResimleri: [...aktifBitisResimleri],
                             gridCols: gCols, gridRows: gRows, gridTema: gTema, gridStil: gStil, gridYuv: gYuv, gridResimleri: {...aktifGridResimleri}, gridMetinleri: {...aktifGridMetinleri}, 
                             bX: [0, 0, 0, 0, 0], bY: [0, 0, 0, 0, 0], sX: [0, 0, 0, 0, 0], sY: [0, 0, 0, 0, 0], bBoyut: [40, 40, 40, 40, 40], sBoyut: [40, 40, 40, 40, 40],
