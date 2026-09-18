@@ -1449,54 +1449,58 @@
                         
                         let sonGrupIdx = -1;
                         
-                       // YENİ: Dışarıdaki dosyayı ezip kendi varyasyonlarımızı yönetiyoruz!
-                        let gecerliListe = harfSoruTipleri[soruTipi] || [];
-                        
-                        if (soruTipi === "Parmakla Takip Etme") {
-                            gecerliListe = ["Sadece Küçük Harf", "İçi Boş Font", "Kesikli Font", "Yanına Satır At", "Kılavuz Çizgiyi Gizle"];
-                        } else if (soruTipi === "Dış Hat Boyama") {
-                            gecerliListe = ["Büyük Harf", "Küçük Harf", "Görsel Boyama"];
-                        } else if (soruTipi === "Gizli Harf Bulma") {
-                            gecerliListe = ["Sadece Küçük Harf", "Sadece Büyük Harf", "Henüz Öğrenilmemiş Harfler Eklensin"];
-                        } else if (soruTipi === "Sadece Yazı") {
-                            gecerliListe = ["Normal Font", "Kesikli Font", "İçi Boş Font", "Hayalet Font", "İlk Metin Normal (Gerisi Kesikli)", "İlk Metin Normal (Gerisi Hayalet)"];
-                        } else if (soruTipi === "Yanına Resimli Yazı") {
-                            gecerliListe = ["Normal Font", "Kesikli Font", "İçi Boş Font", "Hayalet Font", "İlk Metin Normal (Gerisi Kesikli)", "İlk Metin Normal (Gerisi Hayalet)", "Görseli Sağa Al (Varsayılan Sol)"];
-                        }
-
-                        gecerliListe.forEach((ozellik, idx) => {
-                            let akimGrupIdx = -1;
-                            evrenselZitliklar.forEach((grup, gIdx) => {
-                                if (grup.includes(ozellik)) akimGrupIdx = gIdx;
-                            });
-
-
-                            // YENİ: Kılavuz Çizgi Ekle'den hemen önce KESİKLİ ÇİZGİ atar
-                            if (ozellik === "Kılavuz Çizgi Ekle") {
-                                const ayirici = document.createElement('div');
-                                ayirici.style.width = "100%";
-                                ayirici.style.borderTop = "1px dashed #b2bec3";
-                                ayirici.style.margin = "10px 0 10px 0";
-                                ozellikKutulari.appendChild(ayirici);
-                            } 
-                            // Normal zıtlık grupları arasındaki düz çizgi
-                            else if (idx > 0 && akimGrupIdx !== sonGrupIdx && akimGrupIdx !== -1 && sonGrupIdx !== -1) {
-                                const ayiriciCizgi = document.createElement('div');
-                                ayiriciCizgi.style.width = "100%";
-                                ayiriciCizgi.style.borderTop = "1.5px solid #b2bec3"; 
-                                ayiriciCizgi.style.margin = "12px 0 12px 0"; 
-                                ozellikKutulari.appendChild(ayiriciCizgi);
-                            }
+                       // --- YENİ V3 REGISTRY KÖPRÜSÜ (LEGACY BRIDGE) ---
+                        if (soruTipi === "Harf Yazımı") {
+                            const registryKaydi = window.OkulZiliRegistry.get("ilkokuma.harf_yazimi");
+                            registryKaydi.buildEditor({ container: ozellikKutulari });
+                        } else {
+                            let gecerliListe = harfSoruTipleri[soruTipi] || [];
                             
-                            if (akimGrupIdx !== -1) sonGrupIdx = akimGrupIdx;
+                            if (soruTipi === "Parmakla Takip Etme") {
+                                gecerliListe = ["Sadece Küçük Harf", "İçi Boş Font", "Kesikli Font", "Yanına Satır At", "Kılavuz Çizgiyi Gizle"];
+                            } else if (soruTipi === "Dış Hat Boyama") {
+                                gecerliListe = ["Büyük Harf", "Küçük Harf", "Görsel Boyama"];
+                            } else if (soruTipi === "Gizli Harf Bulma") {
+                                gecerliListe = ["Sadece Küçük Harf", "Sadece Büyük Harf", "Henüz Öğrenilmemiş Harfler Eklensin"];
+                            } else if (soruTipi === "Sadece Yazı") {
+                                gecerliListe = ["Normal Font", "Kesikli Font", "İçi Boş Font", "Hayalet Font", "İlk Metin Normal (Gerisi Kesikli)", "İlk Metin Normal (Gerisi Hayalet)"];
+                            } else if (soruTipi === "Yanına Resimli Yazı") {
+                                gecerliListe = ["Normal Font", "Kesikli Font", "İçi Boş Font", "Hayalet Font", "İlk Metin Normal (Gerisi Kesikli)", "İlk Metin Normal (Gerisi Hayalet)", "Görseli Sağa Al (Varsayılan Sol)"];
+                            }
 
-                            const div = document.createElement('div');
-                            div.style.display = "flex";
-                            div.style.alignItems = "center";
-                            div.style.marginBottom = "6px";
-                            div.innerHTML = `<input type="checkbox" name="ozellik" value="${ozellik}" onchange="varyasyonKontrol(this); basligiGuncelle(); nesneYuklemeAlaniniGuncelle();" style="width: auto; margin: 0 8px 0 0; cursor: pointer;"> <span style="font-size:12px; line-height:1.2;">${ozellik}</span>`;
-                            ozellikKutulari.appendChild(div);
-                        });
+                            gecerliListe.forEach((ozellik, idx) => {
+                                let akimGrupIdx = -1;
+                                evrenselZitliklar.forEach((grup, gIdx) => {
+                                    if (grup.includes(ozellik)) akimGrupIdx = gIdx;
+                                });
+
+                                // YENİ: Kılavuz Çizgi Ekle'den hemen önce KESİKLİ ÇİZGİ atar
+                                if (ozellik === "Kılavuz Çizgi Ekle") {
+                                    const ayirici = document.createElement('div');
+                                    ayirici.style.width = "100%";
+                                    ayirici.style.borderTop = "1px dashed #b2bec3";
+                                    ayirici.style.margin = "10px 0 10px 0";
+                                    ozellikKutulari.appendChild(ayirici);
+                                } 
+                                // Normal zıtlık grupları arasındaki düz çizgi
+                                else if (idx > 0 && akimGrupIdx !== sonGrupIdx && akimGrupIdx !== -1 && sonGrupIdx !== -1) {
+                                    const ayiriciCizgi = document.createElement('div');
+                                    ayiriciCizgi.style.width = "100%";
+                                    ayiriciCizgi.style.borderTop = "1.5px solid #b2bec3"; 
+                                    ayiriciCizgi.style.margin = "12px 0 12px 0"; 
+                                    ozellikKutulari.appendChild(ayiriciCizgi);
+                                }
+                                
+                                if (akimGrupIdx !== -1) sonGrupIdx = akimGrupIdx;
+
+                                const div = document.createElement('div');
+                                div.style.display = "flex";
+                                div.style.alignItems = "center";
+                                div.style.marginBottom = "6px";
+                                div.innerHTML = `<input type="checkbox" name="ozellik" value="${ozellik}" onchange="varyasyonKontrol(this); basligiGuncelle(); nesneYuklemeAlaniniGuncelle();" style="width: auto; margin: 0 8px 0 0; cursor: pointer;"> <span style="font-size:12px; line-height:1.2;">${ozellik}</span>`;
+                                ozellikKutulari.appendChild(div);
+                            });
+                        }
                     } else {
                         if(document.getElementById('ozellikler-alani')) document.getElementById('ozellikler-alani').style.display = 'none';
                     }
